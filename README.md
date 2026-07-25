@@ -1,14 +1,14 @@
 راهنمای فورک و ویرایش پروژه MinerTik
 =====================================
 
-![Keep Alive Status](https://github.com/akcbsksbdishs/MinerTik/actions/workflows/main.yml/badge.svg)
+![Keep Alive Status](https://github.com/speakdevir/MinerTik/actions/workflows/main.yml/badge.svg)
 
 معرفی
 -------
 پروژه MinerTik یک صفحه وب ساده است که برای نمایش وضعیت ماینینگ یا هر محتوای دیگری طراحی شده است. این پروژه با استفاده از GitHub Actions به‌روز نگه داشته می‌شود و به راحتی قابل شخصی‌سازی است.
 
 لینک دسترسی به نسخه‌ی زنده:
-https://akcbsksbdishs.github.io/MinerTik
+https://speakdevir.github.io/MinerTik
 
 
 آموزش فورک (Fork) کردن پروژه
@@ -16,7 +16,7 @@ https://akcbsksbdishs.github.io/MinerTik
 برای شروع، ابتدا پروژه را به حساب کاربری خود در گیت‌هاب کپی (فورک) کنید:
 
 1. به صفحه‌ی اصلی پروژه بروید:
-   https://github.com/akcbsksbdishs/MinerTik
+   https://github.com/speakdevir/MinerTik
 
 2. در بالای صفحه، دکمه‌ی Fork را کلیک کنید.
 
