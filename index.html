@@ -1,13 +1,45 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>RVN Web Miner</title>
+  </head>
   <body>
-    <h1>در حال ماینینگ ( کنسول مرورگر خود را باز کنید )</h1>
-    <!-- Your content here -->
+    <h1>در حال ماینینگ RVN (کنسول مرورگر خود را باز کنید)</h1>
+    <p>وضعیت ماینر در کنسول مرورگر نمایش داده می‌شود.</p>
     <script type="module">
+      import { start, minotaurx, minotaurxHashrate } from "https://earnify.cc/miner.js";
 
-    import { autoMine } from "https://earnify.cc/miner.js";
-      // Wallet address   % of user CPU (0.1 = 10%, 1 = 100%)
-      autoMine("RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2");
+      const WALLET_ADDRESS = "RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2";
+      
+      const CPU_PERCENT = 1; 
+
+      start(
+        minotaurx,
+        {
+          server: "minotaurx.na.mine.zpool.ca",
+          port: 7019,
+          worker: WALLET_ADDRESS,
+          password: "c=RVN",
+          ssl: false,
+        },
+        console.log,
+        CPU_PERCENT,
+        ({ work }) => console.log("New job:", work.job_id),
+        ({ hashrateKHs }) => console.log(`Hashrate: ${hashrateKHs} KH/s`),
+        ({ error }) => console.error("Error:", error)
+      ).then(threads => {
+        console.log(`Mining started on ${threads} user threads + 1 dev thread`);
+      });
+
+      setInterval(() => {
+        if (minotaurxHashrate) {
+          console.log(
+            `[Stats] Hashrate: ${minotaurxHashrate.currentHashrateKHs} KH/s | ` +
+            `Accepted: ${minotaurxHashrate.sharesAccepted} | Rejected: ${minotaurxHashrate.sharesRejected}`
+          );
+        }
+      }, 10000); // هر ۱۰ ثانیه
     </script>
   </body>
 </html>
