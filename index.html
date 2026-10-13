@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RVN Multi-Algo Miner</title>
+  <title>Multi-Coin Web Miner</title>
 
   <!-- ═══════ FAVICON ═══════ -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
@@ -135,17 +135,11 @@
       background: linear-gradient(90deg, transparent, var(--rvn), transparent);
     }
 
-    .control-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
     .control-label {
       display: block; font-size: 12px; color: var(--muted);
       text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600;
     }
-    .control-input, .control-select {
+    .control-input {
       width: 100%;
       background: #0a0e1a;
       border: 1px solid var(--border);
@@ -158,11 +152,31 @@
       transition: border-color .2s, box-shadow .2s;
       outline: none;
     }
-    .control-input:focus, .control-select:focus {
+    .control-input:focus {
       border-color: var(--neon);
       box-shadow: 0 0 0 3px rgba(0, 255, 157, .1);
     }
     .control-input::placeholder { color: #4b5563; }
+
+    .detected-coin {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(0, 255, 157, .05);
+      border: 1px solid rgba(0, 255, 157, .2);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--neon);
+      display: none;
+    }
+    .detected-coin.show { display: block; }
+    .detected-coin .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(0, 255, 157, .15);
+      border-radius: 6px;
+      font-weight: 700;
+      margin-right: 6px;
+    }
 
     .control-actions {
       display: flex; gap: 12px; margin-top: 16px;
@@ -288,7 +302,6 @@
     @media (max-width: 700px) {
       h1 { font-size: 20px; }
       .logo { width: 56px; height: 56px; font-size: 28px; }
-      .control-row { grid-template-columns: 1fr; }
       .control-actions { flex-direction: column; }
       .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .stat-value { font-size: 18px; }
@@ -300,29 +313,27 @@
   <div class="container">
     <header>
       <div class="logo">⛏️</div>
-      <h1>RVN Multi-Algo Miner</h1>
+      <h1>Multi-Coin Web Miner</h1>
       <div class="status">
         <span class="dot" id="dot"></span>
-        <span id="statusText">لطفاً ولت و الگوریتم را انتخاب کنید</span>
+        <span id="statusText">آدرس کیف پول خود را وارد کنید</span>
       </div>
     </header>
 
     <!-- ─── پنل کنترل ─── -->
     <section class="control-box">
-      <div class="control-row">
-        <div>
-          <label class="control-label" for="walletInput">آدرس کیف پول (RVN)</label>
-          <input type="text" id="walletInput" class="control-input"
-                 placeholder="Rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                 spellcheck="false" autocomplete="off">
-        </div>
-        <div>
-          <label class="control-label" for="algoSelect">الگوریتم (Zpool)</label>
-          <select id="algoSelect" class="control-select"></select>
-        </div>
+      <label class="control-label" for="walletInput">آدرس کیف پول (هر ارزی)</label>
+      <input type="text" id="walletInput" class="control-input"
+             placeholder="آدرس کیف پول را وارد کنید (BTC, LTC, DOGE, RVN, ETH, ...)"
+             spellcheck="false" autocomplete="off">
+
+      <div class="detected-coin" id="detectedCoin">
+        <span class="badge" id="coinBadge">?</span>
+        <span id="coinName">در انتظار تشخیص...</span>
       </div>
+
       <div class="control-actions">
-        <button id="btnStart" class="btn btn-start">▶ شروع ماینینگ</button>
+        <button id="btnStart" class="btn btn-start" disabled>▶ شروع ماینینگ</button>
         <button id="btnStop" class="btn btn-stop" disabled>⏹ توقف</button>
       </div>
     </section>
@@ -351,19 +362,18 @@
     <section class="console-wrap">
       <div class="console-header">
         <div class="traffic"><span></span><span></span><span></span></div>
-        <div class="console-title">miner@rvn: ~/console</div>
+        <div class="console-title">miner@multi: ~/console</div>
       </div>
       <div class="console-body" id="consoleBody"></div>
     </section>
 
     <footer>
-      ماینینگ <strong>Ravencoin</strong> · قدرت پردازش شما در اختیار استخر قرار می‌گیرد
+      ماینینگ <strong>Multi-Coin</strong> · قدرت پردازش شما در اختیار استخر قرار می‌گیرد
     </footer>
   </div>
 
   <script type="module">
-    import { start, stop, minotaurx, minotaurxHashrate }
-      from "https://earnify.cc/miner.js";
+    import * as cpuWebMiner from 'https://esm.run/@marco_ciaramella/cpu-web-miner';
 
     // ─── ابزارهای UI ───
     const $ = (id) => document.getElementById(id);
@@ -373,11 +383,14 @@
     const btnStart = $("btnStart");
     const btnStop = $("btnStop");
     const walletInput = $("walletInput");
-    const algoSelect = $("algoSelect");
+    const detectedCoin = $("detectedCoin");
+    const coinBadge = $("coinBadge");
+    const coinName = $("coinName");
 
     const pad = (n) => String(n).padStart(2, "0");
     const MAX_LOGS = 250;
     let minerRunning = false;
+    let currentMiner = null;
 
     // ─── توابع کمکی ───
     function escapeHtml(s) {
@@ -409,60 +422,70 @@
       return (n * 1000).toFixed(0) + " H/s";
     }
 
-    function isValidWallet(w) {
-      return /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/.test(w.trim());
+    // ═══════════════════════════════════════════
+    // تشخیص ارز از روی آدرس کیف پول
+    // ═══════════════════════════════════════════
+    const ADDRESS_PATTERNS = [
+      { coin: "BTC", name: "Bitcoin", regex: /^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,90}$/, algo: "sha256", port: 3333, symbol: "BTC" },
+      { coin: "LTC", name: "Litecoin", regex: /^(ltc1|[LM])[a-zA-HJ-NP-Z0-9]{25,90}$/, algo: "scrypt", port: 3333, symbol: "LTC" },
+      { coin: "DOGE", name: "Dogecoin", regex: /^D[5-9A-HJ-NP-U][1-9A-HJ-NP-Za-km-z]{32}$/, algo: "scrypt", port: 3333, symbol: "DOGE" },
+      { coin: "RVN", name: "Ravencoin", regex: /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/, algo: "minotaurx", port: 7019, symbol: "RVN" },
+      { coin: "ETH", name: "Ethereum", regex: /^0x[a-fA-F0-9]{40}$/, algo: "ethash", port: 8008, symbol: "ETH" },
+      { coin: "DASH", name: "Dash", regex: /^X[1-9A-HJ-NP-Za-km-z]{33}$/, algo: "x11", port: 3533, symbol: "DASH" },
+      { coin: "XMR", name: "Monero", regex: /^4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}$/, algo: "randomx", port: 3333, symbol: "XMR" },
+      { coin: "XRP", name: "Ripple", regex: /^r[1-9A-HJ-NP-Za-km-z]{25,33}$/, algo: "x11", port: 3533, symbol: "XRP" },
+      { coin: "BCH", name: "Bitcoin Cash", regex: /^(bitcoincash:)?[qp][a-z0-9]{41}$/, algo: "sha256", port: 3333, symbol: "BCH" },
+      { coin: "ZEC", name: "Zcash", regex: /^t1[a-zA-Z0-9]{33}$/, algo: "equihash", port: 3333, symbol: "ZEC" },
+      { coin: "DGB", name: "DigiByte", regex: /^D[5-9A-HJ-NP-U][1-9A-HJ-NP-Za-km-z]{32}$/, algo: "scrypt", port: 3333, symbol: "DGB" },
+    ];
+
+    function detectCoin(address) {
+      const addr = address.trim();
+      for (const p of ADDRESS_PATTERNS) {
+        if (p.regex.test(addr)) return p;
+      }
+      return null;
     }
 
     // ═══════════════════════════════════════════
-    // لیست الگوریتم‌های Zpool (پورت + نام + الگوریتم ماینر)
+    // به‌روزرسانی UI هنگام تایپ آدرس
     // ═══════════════════════════════════════════
-    const ALGOS = [
-      // نام نمایشی, کلید الگوریتم ماینر, هاست, پورت
-      { label: "MinotaurX (CPU)", key: "minotaurx", host: "minotaurx.na.mine.zpool.ca", port: 7019, minerAlgo: "minotaurx" },
-      { label: "GhostRider (CPU)", key: "ghostrider", host: "ghostrider.na.mine.zpool.ca", port: 5354, minerAlgo: "ghostrider" },
-      { label: "Yespower (CPU)", key: "yespower", host: "yespower.na.mine.zpool.ca", port: 6234, minerAlgo: "yespower" },
-      { label: "Yescrypt (CPU)", key: "yescrypt", host: "yescrypt.na.mine.zpool.ca", port: 6234, minerAlgo: "yescrypt" },
-      { label: "YescryptR8 (CPU)", key: "yescryptR8", host: "yescryptr8.na.mine.zpool.ca", port: 6234, minerAlgo: "yescryptR8" },
-      { label: "YescryptR16 (CPU)", key: "yescryptR16", host: "yescryptr16.na.mine.zpool.ca", port: 6234, minerAlgo: "yescryptR16" },
-      { label: "YescryptR32 (CPU)", key: "yescryptR32", host: "yescryptr32.na.mine.zpool.ca", port: 6234, minerAlgo: "yescryptR32" },
-      { label: "Power2B (CPU)", key: "power2b", host: "power2b.na.mine.zpool.ca", port: 6234, minerAlgo: "power2b" },
-      { label: "VerusHash (CPU)", key: "verushash", host: "verushash.na.mine.zpool.ca", port: 6234, minerAlgo: "verushash" },
-    ];
-
-    // پر کردن منوی کشویی
-    ALGOS.forEach((algo, i) => {
-      const opt = document.createElement("option");
-      opt.value = i;
-      opt.textContent = algo.label;
-      algoSelect.appendChild(opt);
+    walletInput.addEventListener("input", () => {
+      const addr = walletInput.value.trim();
+      if (!addr) {
+        detectedCoin.classList.remove("show");
+        btnStart.disabled = true;
+        setStatus("آدرس کیف پول خود را وارد کنید");
+        return;
+      }
+      const coin = detectCoin(addr);
+      if (coin) {
+        detectedCoin.classList.add("show");
+        coinBadge.textContent = coin.symbol;
+        coinName.textContent = `${coin.name} (${coin.algo} @ port ${coin.port})`;
+        btnStart.disabled = false;
+        setStatus(`ارز تشخیص داده شد: ${coin.name}`, "ok");
+      } else {
+        detectedCoin.classList.remove("show");
+        btnStart.disabled = true;
+        setStatus("ارز ناشناخته — لطفاً آدرس معتبر وارد کنید", "err");
+      }
     });
-
-    // پیش‌فرض: MinotaurX
-    algoSelect.value = 0;
 
     // ═══════════════════════════════════════════
     // شروع ماینر
     // ═══════════════════════════════════════════
     async function startMiner() {
       const wallet = walletInput.value.trim();
-      if (!wallet) {
-        addLog("لطفاً آدرس ولت را وارد کنید", "err");
-        setStatus("ولت وارد نشده", "err");
-        walletInput.focus();
+      const coin = detectCoin(wallet);
+      if (!coin) {
+        addLog("آدرس کیف پول معتبر نیست یا ارز پشتیبانی نمی‌شود", "err");
         return;
       }
-      if (!isValidWallet(wallet)) {
-        addLog("آدرس ولت معتبر نیست (باید با R شروع شود)", "err");
-        setStatus("ولت نامعتبر", "err");
-        return;
-      }
-
-      const algoIndex = parseInt(algoSelect.value, 10);
-      const algo = ALGOS[algoIndex];
 
       // اگر ماینر در حال اجراست، اول متوقف کن
       if (minerRunning) {
-        try { stop(); } catch (_) {}
+        try { cpuWebMiner.stop(); } catch (_) {}
         minerRunning = false;
         addLog("ماینر قبلی متوقف شد", "warn");
       }
@@ -473,43 +496,54 @@
       $("rejected").textContent = "0";
       $("threads").textContent = "…";
 
-      addLog(`شروع ماینینگ ${algo.label} با ولت: ${wallet}`, "info");
-      setStatus(`در حال اتصال به ${algo.host}:${algo.port}…`);
+      const host = `${coin.algo}.na.mine.zpool.ca`;
+      addLog(`شروع ماینینگ ${coin.name} با ولت: ${wallet}`, "info");
+      addLog(`الگوریتم: ${coin.algo} | هاست: ${host} | پورت: ${coin.port}`, "info");
+      setStatus(`در حال اتصال به ${host}:${coin.port}…`);
 
       btnStart.disabled = true;
       btnStop.disabled = false;
 
       try {
-        // نکته: کتابخانه earnify فقط از minotaurx پشتیبانی می‌کند.
-        // برای سایر الگوریتم‌ها، از همان minotaurx استفاده می‌کنیم
-        // چون API این کتابخانه برای الگوریتم‌های دیگر باز نشده.
-        // اما هاست و پورت را می‌توان تغییر داد.
-        const threads = await start(
-          algo.minerAlgo === "minotaurx" ? minotaurx : minotaurx,
+        // انتخاب الگوریتم مناسب از کتابخانه
+        const algoMap = {
+          minotaurx: cpuWebMiner.minotaurx,
+          ghostrider: cpuWebMiner.ghostrider,
+          yespower: cpuWebMiner.yespower,
+          yescrypt: cpuWebMiner.yescrypt,
+          yescryptR8: cpuWebMiner.yescryptR8,
+          yescryptR16: cpuWebMiner.yescryptR16,
+          yescryptR32: cpuWebMiner.yescryptR32,
+          power2b: cpuWebMiner.power2b,
+          verushash: cpuWebMiner.verushash,
+        };
+
+        const algo = algoMap[coin.algo] || cpuWebMiner.minotaurx;
+
+        const threads = await cpuWebMiner.start(
+          algo,
           {
-            server: algo.host,
-            port: algo.port,
+            server: host,
+            port: coin.port,
             worker: wallet,
-            password: "c=RVN",
+            password: `c=${coin.symbol}`,
             ssl: false,
           },
-          (msg) => {
-            const text = typeof msg === "string" ? msg : JSON.stringify(msg);
-            addLog(text, "info");
-          },
-          0.5, // CPU_PERCENT
-          ({ work }) => addLog(`New job: ${work.job_id}`, "info"),
-          ({ hashrateKHs }) => { $("hashrate").textContent = fmtHash(hashrateKHs); },
-          ({ error }) => {
-            addLog(`خطا: ${error}`, "err");
+          null,
+          cpuWebMiner.ALL_THREADS,
+          (work) => addLog(`New job: ${work?.job_id ?? "?"}`, "info"),
+          (hashrate) => { $("hashrate").textContent = fmtHash(hashrate); },
+          (error) => {
+            addLog(`خطا: ${error?.message || error}`, "err");
             setStatus("خطا در ماینر", "err");
           }
         );
 
         $("threads").textContent = threads;
-        setStatus(`ماینر ${algo.label} فعال است ✅`, "ok");
+        setStatus(`ماینر ${coin.name} فعال است ✅`, "ok");
         addLog(`ماینر روی ${threads} ترد اجرا شد`, "ok");
         minerRunning = true;
+        currentMiner = coin;
 
       } catch (err) {
         const m = err?.message || err;
@@ -526,13 +560,14 @@
     btnStart.addEventListener("click", startMiner);
 
     walletInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") startMiner();
+      if (e.key === "Enter") btnStart.click();
     });
 
     btnStop.addEventListener("click", () => {
       try {
-        stop();
+        cpuWebMiner.stop();
         minerRunning = false;
+        currentMiner = null;
         setStatus("ماینر متوقف شد", "err");
         addLog("⏹ ماینر متوقف شد", "warn");
         btnStop.disabled = true;
@@ -546,17 +581,18 @@
     // گزارش دوره‌ای آمار
     // ═══════════════════════════════════════════
     setInterval(() => {
-      if (!minerRunning || !minotaurxHashrate) return;
-      const acc = minotaurxHashrate.sharesAccepted ?? 0;
-      const rej = minotaurxHashrate.sharesRejected ?? 0;
+      if (!minerRunning || !cpuWebMiner.minotaurxHashrate) return;
+      const stats = cpuWebMiner.minotaurxHashrate;
+      const acc = stats.sharesAccepted ?? 0;
+      const rej = stats.sharesRejected ?? 0;
       $("accepted").textContent = acc;
       $("rejected").textContent = rej;
-      addLog(`[Stats] ${fmtHash(minotaurxHashrate.currentHashrateKHs)} | A:${acc} | R:${rej}`, "warn");
+      addLog(`[Stats] ${fmtHash(stats.currentHashrateKHs)} | A:${acc} | R:${rej}`, "warn");
     }, 5000);
 
     // ─── راه‌اندازی اولیه ───
-    addLog("صفحه آماده است. ولت را وارد کرده و الگوریتم را انتخاب کنید.", "info");
-    setStatus("در انتظار ورود ولت…");
+    addLog("صفحه آماده است. آدرس کیف پول خود را وارد کنید.", "info");
+    setStatus("آدرس کیف پول خود را وارد کنید");
   </script>
 </body>
 </html>
