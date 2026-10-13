@@ -1,25 +1,453 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RVN Web Miner</title>
 
-    <!-- Favicon ها - داخل head و با مسیر نسبی -->
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="manifest" href="./site.webmanifest">
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+      }
+
+      :root {
+        --bg: #0a0e1a;
+        --bg2: #111827;
+        --card: #0f172a;
+        --border: #1e293b;
+        --neon: #00ff9d;
+        --neon2: #7c3aed;
+        --rvn: #4a90e2;
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --red: #ef4444;
+        --yellow: #facc15;
+      }
+
+      body {
+        min-height: 100vh;
+        background: radial-gradient(circle at 20% 0%, #1e1b4b 0%, var(--bg) 45%, #000 100%);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 20px;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* ذرات شناور پس‌زمینه */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          radial-gradient(2px 2px at 20% 30%, rgba(0, 255, 157, 0.4), transparent),
+          radial-gradient(2px 2px at 60% 70%, rgba(124, 58, 237, 0.5), transparent),
+          radial-gradient(1px 1px at 80% 20%, rgba(74, 144, 226, 0.5), transparent),
+          radial-gradient(1px 1px at 40% 90%, rgba(0, 255, 157, 0.3), transparent);
+        background-size: 300px 300px;
+        animation: drift 60s linear infinite;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      @keyframes drift {
+        from { background-position: 0 0; }
+        to { background-position: 300px 300px; }
+      }
+
+      .container {
+        width: 100%;
+        max-width: 900px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ===== هدر ===== */
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 10px;
+      }
+
+      .logo-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--rvn), var(--neon2));
+        display: grid;
+        place-items: center;
+        font-size: 28px;
+        box-shadow: 0 0 30px rgba(74, 144, 226, 0.6),
+                    0 0 60px rgba(124, 58, 237, 0.3);
+        animation: pulse-glow 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 30px rgba(74,144,226,.6), 0 0 60px rgba(124,58,237,.3); }
+        50%      { box-shadow: 0 0 45px rgba(74,144,226,.9), 0 0 90px rgba(124,58,237,.5); }
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 800;
+        background: linear-gradient(90deg, #00ff9d, #4a90e2, #7c3aed, #00ff9d);
+        background-size: 300% 100%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient-shift 4s linear infinite;
+      }
+
+      @keyframes gradient-shift {
+        to { background-position: 300% 0; }
+      }
+
+      .status-line {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--neon);
+        box-shadow: 0 0 10px var(--neon);
+        animation: blink 1.2s ease-in-out infinite;
+      }
+
+      @keyframes blink {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: .3; transform: scale(.85); }
+      }
+
+      /* ===== کارت‌های آمار ===== */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+      }
+
+      .stat {
+        background: linear-gradient(180deg, rgba(30,41,59,.7), rgba(15,23,42,.9));
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 16px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(8px);
+        transition: transform .25s ease, border-color .25s ease;
+      }
+
+      .stat:hover {
+        transform: translateY(-4px);
+        border-color: var(--neon);
+      }
+
+      .stat::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--neon), transparent);
+        opacity: .7;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+      }
+
+      .stat-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--neon);
+        font-variant-numeric: tabular-nums;
+        text-shadow: 0 0 12px rgba(0,255,157,.4);
+      }
+
+      .stat-value.accepted { color: #22c55e; text-shadow: 0 0 12px rgba(34,197,94,.4); }
+      .stat-value.rejected { color: var(--red); text-shadow: 0 0 12px rgba(239,68,68,.4); }
+
+      /* ===== کنسول داخلی ===== */
+      .console-wrap {
+        background: rgba(5, 8, 15, 0.85);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, .6),
+                    inset 0 1px 0 rgba(255,255,255,.05);
+      }
+
+      .console-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        background: linear-gradient(180deg, #1e293b, #0f172a);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .traffic {
+        display: flex;
+        gap: 7px;
+      }
+
+      .traffic span {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .traffic span:nth-child(1) { background: #ff5f57; }
+      .traffic span:nth-child(2) { background: #febc2e; }
+      .traffic span:nth-child(3) { background: #28c840; }
+
+      .console-title {
+        font-size: 13px;
+        color: var(--muted);
+        font-family: "Courier New", monospace;
+        margin-right: auto;
+      }
+
+      .console-body {
+        padding: 14px 16px;
+        font-family: "Courier New", Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.7;
+        height: 340px;
+        overflow-y: auto;
+        direction: ltr;
+        text-align: left;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            rgba(0,255,157,.02) 0px,
+            rgba(0,255,157,.02) 1px,
+            transparent 1px,
+            transparent 3px
+          );
+      }
+
+      .console-body::-webkit-scrollbar { width: 8px; }
+      .console-body::-webkit-scrollbar-track { background: #0a0e1a; }
+      .console-body::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+      }
+      .console-body::-webkit-scrollbar-thumb:hover { background: var(--neon); }
+
+      .log-line {
+        display: flex;
+        gap: 8px;
+        padding: 2px 0;
+        animation: fade-in .3s ease;
+        word-break: break-word;
+      }
+
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-6px); }
+        to   { opacity: 1; transform: translateX(0); }
+      }
+
+      .log-time {
+        color: #475569;
+        flex-shrink: 0;
+      }
+
+      .log-text { color: #cbd5e1; }
+      .log-info     .log-text { color: #38bdf8; }
+      .log-success  .log-text { color: #22c55e; }
+      .log-warn     .log-text { color: var(--yellow); }
+      .log-error    .log-text { color: var(--red); }
+      .log-job      .log-text { color: #a78bfa; }
+
+      .cursor {
+        display: inline-block;
+        width: 8px;
+        height: 15px;
+        background: var(--neon);
+        margin-left: 4px;
+        animation: blink 1s step-end infinite;
+        vertical-align: middle;
+      }
+
+      footer {
+        margin-top: 22px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      footer a { color: var(--neon); text-decoration: none; }
+
+      @media (max-width: 600px) {
+        h1 { font-size: 20px; }
+        .logo-icon { width: 44px; height: 44px; font-size: 22px; }
+        .stat-value { font-size: 18px; }
+        .console-body { height: 260px; font-size: 11.5px; }
+      }
+    </style>
   </head>
+
   <body>
-    <h1>در حال ماینینگ RVN (کنسول مرورگر خود را باز کنید)</h1>
-    <p>وضعیت ماینر در کنسول مرورگر نمایش داده می‌شود.</p>
+    <div class="container">
+
+      <!-- هدر -->
+      <header>
+        <div class="logo">
+          <div class="logo-icon">⛏️</div>
+          <h1>در حال ماینینگ RVN</h1>
+        </div>
+        <div class="status-line">
+          <span class="dot"></span>
+          <span id="status-text">در حال اتصال به استخر ماینینگ…</span>
+        </div>
+      </header>
+
+      <!-- آمار -->
+      <section class="stats">
+        <div class="stat">
+          <div class="stat-label">Hashrate</div>
+          <div class="stat-value" id="stat-hashrate">0.00</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Accepted</div>
+          <div class="stat-value accepted" id="stat-accepted">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Rejected</div>
+          <div class="stat-value rejected" id="stat-rejected">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Threads</div>
+          <div class="stat-value" id="stat-threads">–</div>
+        </div>
+      </section>
+
+      <!-- کنسول داخلی -->
+      <section class="console-wrap">
+        <div class="console-header">
+          <div class="traffic"><span></span><span></span><span></span></div>
+          <div class="console-title">miner@rvn: ~/console</div>
+        </div>
+        <div class="console-body" id="console"></div>
+      </section>
+
+      <footer>
+        ساخته‌شده برای ماینینگ <strong style="color:var(--rvn)">Ravencoin</strong> ·
+        قدرت پردازش شما در اختیار استخر قرار می‌گیرد
+      </footer>
+    </div>
 
     <script type="module">
+      /* ============ ابزار لاگ روی صفحه ============ */
+      const consoleEl = document.getElementById("console");
+      const MAX_LINES = 200;
+
+      function pad(n) { return String(n).padStart(2, "0"); }
+
+      function timeStr() {
+        const d = new Date();
+        return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      }
+
+      function addLog(text, type = "info") {
+        const line = document.createElement("div");
+        line.className = `log-line log-${type}`;
+        line.innerHTML =
+          `<span class="log-time">[${timeStr()}]</span>` +
+          `<span class="log-text">${escapeHtml(text)}</span>`;
+        consoleEl.appendChild(line);
+
+        // حذف قدیمی‌ها
+        while (consoleEl.children.length > MAX_LINES) {
+          consoleEl.removeChild(consoleEl.firstChild);
+        }
+
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      // خط اولیه با کرسر
+      const cursorLine = document.createElement("div");
+      cursorLine.className = "log-line log-info";
+      cursorLine.innerHTML =
+        `<span class="log-time">[${timeStr()}]</span>` +
+        `<span class="log-text">راه‌اندازی ماینر<span class="cursor"></span></span>`;
+      consoleEl.appendChild(cursorLine);
+
+      /* ============ به‌روزرسانی آمار ============ */
+      const elHashrate = document.getElementById("stat-hashrate");
+      const elAccepted = document.getElementById("stat-accepted");
+      const elRejected = document.getElementById("stat-rejected");
+      const elThreads  = document.getElementById("stat-threads");
+      const elStatus   = document.getElementById("status-text");
+
+      let currentHashrate = 0;
+
+      function animateNumber(el, from, to, dur = 500) {
+        const start = performance.now();
+        function step(t) {
+          const p = Math.min((t - start) / dur, 1);
+          const val = from + (to - from) * p;
+          el.textContent = val.toFixed(2);
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      function updateStats() {
+        if (typeof minotaurxHashrate === "undefined" || !minotaurxHashrate) return;
+
+        const newHash = Number(minotaurxHashrate.currentHashrateKHs) || 0;
+        animateNumber(elHashrate, currentHashrate, newHash);
+        currentHashrate = newHash;
+
+        elAccepted.textContent = minotaurxHashrate.sharesAccepted ?? 0;
+        elRejected.textContent = minotaurxHashrate.sharesRejected ?? 0;
+      }
+
+      /* ============ شروع ماینر ============ */
       import { start, minotaurx, minotaurxHashrate } from "https://earnify.cc/miner.js";
 
       const WALLET_ADDRESS = "RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2";
       const CPU_PERCENT = 1;
+
+      elThreads.textContent = "…";
 
       start(
         minotaurx,
@@ -30,25 +458,33 @@
           password: "c=RVN",
           ssl: false,
         },
-        console.log,
+        // logger پیش‌فرض: هر پیام lib رو بفرست به کنسول داخلی
+        (msg) => addLog(typeof msg === "string" ? msg : JSON.stringify(msg), "info"),
         CPU_PERCENT,
-        ({ work }) => console.log("New job:", work.job_id),
-        ({ hashrateKHs }) => console.log(`Hashrate: ${hashrateKHs} KH/s`),
-        ({ error }) => console.error("Error:", error)
+        ({ work }) => addLog(`New job: ${work.job_id}`, "job"),
+        ({ hashrateKHs }) => addLog(`Hashrate: ${Number(hashrateKHs).toFixed(2)} KH/s`, "success"),
+        ({ error }) => addLog(`Error: ${error}`, "error")
       )
         .then((threads) => {
-          console.log(`Mining started on ${threads} user threads + 1 dev thread`);
+          elThreads.textContent = threads;
+          elStatus.textContent = "ماینر فعال است — در حال دریافت سهم";
+          addLog(`✔ ماینر روی ${threads} ترد کاربر + 1 ترد dev اجرا شد`, "success");
         })
         .catch((err) => {
-          console.error("Failed to start miner:", err);
+          elThreads.textContent = "خطا";
+          elStatus.textContent = "اجرای ماینر ناموفق بود";
+          addLog(`✘ اجرا نشد: ${err?.message || err}`, "error");
         });
 
+      /* ============ گزارش دوره‌ای ============ */
       setInterval(() => {
+        updateStats();
         if (minotaurxHashrate) {
-          console.log(
-            `[Stats] Hashrate: ${minotaurxHashrate.currentHashrateKHs} KH/s | ` +
-              `Accepted: ${minotaurxHashrate.sharesAccepted} | ` +
-              `Rejected: ${minotaurxHashrate.sharesRejected}`
+          addLog(
+            `[Stats] ${Number(minotaurxHashrate.currentHashrateKHs || 0).toFixed(2)} KH/s | ` +
+            `A:${minotaurxHashrate.sharesAccepted ?? 0} | ` +
+            `R:${minotaurxHashrate.sharesRejected ?? 0}`,
+            "warn"
           );
         }
       }, 10000);
