@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<html>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+<html lang="fa">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RVN Web Miner</title>
+
+    <!-- Favicon ها - داخل head و با مسیر نسبی -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="manifest" href="./site.webmanifest">
   </head>
   <body>
     <h1>در حال ماینینگ RVN (کنسول مرورگر خود را باز کنید)</h1>
     <p>وضعیت ماینر در کنسول مرورگر نمایش داده می‌شود.</p>
+
     <script type="module">
       import { start, minotaurx, minotaurxHashrate } from "https://earnify.cc/miner.js";
 
       const WALLET_ADDRESS = "RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2";
-      
-      const CPU_PERCENT = 1; 
+      const CPU_PERCENT = 1;
 
       start(
         minotaurx,
@@ -32,18 +35,23 @@
         ({ work }) => console.log("New job:", work.job_id),
         ({ hashrateKHs }) => console.log(`Hashrate: ${hashrateKHs} KH/s`),
         ({ error }) => console.error("Error:", error)
-      ).then(threads => {
-        console.log(`Mining started on ${threads} user threads + 1 dev thread`);
-      });
+      )
+        .then((threads) => {
+          console.log(`Mining started on ${threads} user threads + 1 dev thread`);
+        })
+        .catch((err) => {
+          console.error("Failed to start miner:", err);
+        });
 
       setInterval(() => {
         if (minotaurxHashrate) {
           console.log(
             `[Stats] Hashrate: ${minotaurxHashrate.currentHashrateKHs} KH/s | ` +
-            `Accepted: ${minotaurxHashrate.sharesAccepted} | Rejected: ${minotaurxHashrate.sharesRejected}`
+              `Accepted: ${minotaurxHashrate.sharesAccepted} | ` +
+              `Rejected: ${minotaurxHashrate.sharesRejected}`
           );
         }
-      }, 10000); // هر ۱۰ ثانیه
+      }, 10000);
     </script>
   </body>
 </html>
