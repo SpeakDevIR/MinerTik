@@ -7,33 +7,22 @@
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
 
-  <!-- ═══════ 🪝 Hook: ریدایرکت WebSocket به سرور خودت ═══════ -->
+  <!-- ═══════ 🪝 Hook ═══════ -->
   <script>
     (function () {
       const FROM = 'websocket-stratum-server.com';
-      const TO = 'YOUR-RENDER-APP.onrender.com'; // ← آدرس سرور Render خودت را اینجا بگذار
-
-      const log = (m) => console.log('%c[Hook]', 'color:#0ff', m);
+      const TO = 'YOUR-RENDER-APP.onrender.com'; // ← آدرس Render خودت
 
       const OrigWS = window.WebSocket;
       window.WebSocket = function (url, protocols) {
         if (typeof url === 'string' && url.includes(FROM)) {
           url = url.replace(FROM, TO);
-          log('WS → ' + url);
+          console.log('[Hook] WS → ' + url);
         }
         return protocols !== undefined ? new OrigWS(url, protocols) : new OrigWS(url);
       };
       window.WebSocket.prototype = OrigWS.prototype;
       Object.assign(window.WebSocket, OrigWS);
-
-      const origOpen = XMLHttpRequest.prototype.open;
-      XMLHttpRequest.prototype.open = function (method, url) {
-        if (typeof url === 'string' && url.includes(FROM)) {
-          url = url.replace(FROM, TO);
-          log('XHR → ' + url);
-        }
-        return origOpen.apply(this, arguments);
-      };
     })();
   </script>
 
@@ -106,28 +95,18 @@
       border: 1px solid var(--border); border-radius: 10px;
       padding: 12px 14px; color: var(--text);
       font-family: "Courier New", monospace; font-size: 13px;
-      direction: ltr; text-align: left;
-      transition: border-color .2s, box-shadow .2s; outline: none;
+      direction: ltr; text-align: left; outline: none;
     }
-    .control-input:focus {
-      border-color: var(--neon);
-      box-shadow: 0 0 0 3px rgba(0, 255, 157, .1);
-    }
+    .control-input:focus { border-color: var(--neon); box-shadow: 0 0 0 3px rgba(0,255,157,.1); }
     .control-actions { display: flex; gap: 12px; margin-top: 16px; }
     .btn {
       flex: 1; padding: 12px 20px; border: none; border-radius: 10px;
       font-size: 15px; font-weight: 700; cursor: pointer;
       transition: all .2s ease; font-family: inherit; color: #fff;
     }
-    .btn-start {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      box-shadow: 0 4px 20px rgba(34,197,94,.4);
-    }
+    .btn-start { background: linear-gradient(135deg, #22c55e, #16a34a); }
     .btn-start:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(34,197,94,.6); }
-    .btn-stop {
-      background: linear-gradient(135deg, #ef4444, #b91c1c);
-      box-shadow: 0 4px 20px rgba(239,68,68,.4);
-    }
+    .btn-stop { background: linear-gradient(135deg, #ef4444, #b91c1c); }
     .btn-stop:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(239,68,68,.6); }
     .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
 
@@ -139,28 +118,27 @@
       background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
       border: 1px solid var(--border); border-radius: 14px;
       padding: 18px 12px; text-align: center; position: relative;
-      overflow: hidden; transition: transform .25s, border-color .25s;
+      overflow: hidden;
     }
-    .stat:hover { transform: translateY(-4px); border-color: var(--neon); }
     .stat::before {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, var(--neon), transparent);
-      opacity: .8;
     }
     .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     .stat-value {
-      font-size: 22px; font-weight: 700; color: var(--neon);
+      font-size: 20px; font-weight: 700; color: var(--neon);
       font-variant-numeric: tabular-nums;
       text-shadow: 0 0 12px rgba(0,255,157,.5);
+      word-break: break-all;
     }
-    .stat-value.ok  { color: #22c55e; text-shadow: 0 0 12px rgba(34,197,94,.5); }
-    .stat-value.err { color: var(--red);  text-shadow: 0 0 12px rgba(239,68,68,.5); }
+    .stat-value.ok  { color: #22c55e; }
+    .stat-value.err { color: var(--red); }
+    .stat-value.waiting { color: var(--yellow); font-size: 14px; }
 
     .console-wrap {
       background: rgba(5, 8, 15, 0.9);
       border: 1px solid var(--border); border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
     }
     .console-header {
       display: flex; align-items: center; gap: 10px;
@@ -183,21 +161,11 @@
       font-size: 12.5px; line-height: 1.7;
       height: 300px; overflow-y: auto;
       direction: ltr; text-align: left;
-      background: repeating-linear-gradient(0deg, rgba(0,255,157,.02) 0, rgba(0,255,157,.02) 1px, transparent 1px, transparent 3px);
     }
     .console-body::-webkit-scrollbar { width: 10px; }
-    .console-body::-webkit-scrollbar-track { background: #0a0e1a; }
-    .console-body::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 5px; border: 2px solid #0a0e1a; }
+    .console-body::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 5px; }
 
-    .line {
-      display: flex; gap: 8px; padding: 3px 0;
-      border-bottom: 1px solid #1a1a1a; word-break: break-word;
-      animation: fade-in .3s ease;
-    }
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateX(-6px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
+    .line { display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #1a1a1a; word-break: break-word; }
     .line .time { color: #475569; flex-shrink: 0; }
     .line .msg  { flex: 1; color: #cbd5e1; }
     .line.info .msg { color: #38bdf8; }
@@ -213,7 +181,6 @@
       .logo { width: 56px; height: 56px; font-size: 28px; }
       .control-actions { flex-direction: column; }
       .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .stat-value { font-size: 18px; }
       .console-body { height: 240px; font-size: 11.5px; }
     }
   </style>
@@ -245,7 +212,7 @@
     <section class="stats">
       <div class="stat">
         <div class="stat-label">Hashrate</div>
-        <div class="stat-value" id="hashrate">0</div>
+        <div class="stat-value waiting" id="hashrate">در انتظار اولین share…</div>
       </div>
       <div class="stat">
         <div class="stat-label">Accepted</div>
@@ -277,7 +244,6 @@
   <script type="module">
     import * as cpuWebMiner from 'https://esm.run/@marco_ciaramella/cpu-web-miner';
 
-    // ─── عناصر UI ───
     const $ = (id) => document.getElementById(id);
     const consoleBody = $("consoleBody");
     const dot = $("dot");
@@ -287,10 +253,17 @@
     const walletInput = $("walletInput");
 
     const pad = (n) => String(n).padStart(2, "0");
-    const MAX_LOGS = 250;
-    let minerRunning = false;
+    const MAX_LOGS = 200;
 
-    // ─── توابع کمکی ───
+    // ─── وضعیت محلی (چون کتابخانه آمار زنده نمی‌ده) ───
+    let minerRunning = false;
+    let currentHashrate = 0;      // آخرین مقدار KH/s
+    let acceptedCount = 0;
+    let rejectedCount = 0;
+    let lastJobId = "—";
+    let startTime = null;
+
+    // ─── توابع UI ───
     function escapeHtml(s) {
       return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
@@ -304,8 +277,7 @@
       consoleBody.appendChild(line);
       while (consoleBody.children.length > MAX_LOGS) consoleBody.removeChild(consoleBody.firstChild);
       consoleBody.scrollTop = consoleBody.scrollHeight;
-      const fn = type === "err" ? "error" : type === "warn" ? "warn" : "log";
-      console[fn]("[miner]", msg);
+      console.log(`[miner][${type}] ${msg}`);
     }
 
     function setStatus(text, kind = "warn") {
@@ -320,18 +292,35 @@
       return (n * 1000).toFixed(0) + " H/s";
     }
 
+    function updateHashrate(khs) {
+      currentHashrate = Number(khs) || 0;
+      const el = $("hashrate");
+      el.textContent = fmtHash(currentHashrate);
+      el.classList.remove("waiting");
+    }
+
     function isValidWallet(w) {
       return /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/.test(w.trim());
     }
 
-    // ─── شروع ماینر ───
+    // ─── استخراج مقدار از هر شکلی که callback بده ───
+    function extractHashrate(v) {
+      if (v == null) return 0;
+      if (typeof v === "number") return v;
+      if (typeof v === "string") return parseFloat(v) || 0;
+      if (typeof v === "object") {
+        return Number(v.hashrateKHs ?? v.hashrate ?? v.khs ?? 0) || 0;
+      }
+      return 0;
+    }
+
+    // ─── شروع ───
     async function startMiner() {
       const wallet = walletInput.value.trim();
 
       if (!isValidWallet(wallet)) {
-        addLog("آدرس کیف پول معتبر نیست (باید با R شروع شود)", "err");
+        addLog("آدرس کیف پول معتبر نیست", "err");
         setStatus("ولت نامعتبر", "err");
-        walletInput.focus();
         return;
       }
 
@@ -340,8 +329,21 @@
         return;
       }
 
+      // ریست
+      currentHashrate = 0;
+      acceptedCount = 0;
+      rejectedCount = 0;
+      lastJobId = "—";
+      startTime = Date.now();
+
+      $("hashrate").textContent = "در انتظار اولین share…";
+      $("hashrate").classList.add("waiting");
+      $("accepted").textContent = "0";
+      $("rejected").textContent = "0";
+      $("threads").textContent = "…";
+
       addLog(`شروع ماینینگ با ولت: ${wallet}`, "info");
-      setStatus("در حال اتصال…");
+      setStatus("در حال اتصال به استخر…");
 
       btnStart.disabled = true;
       btnStop.disabled = false;
@@ -356,15 +358,31 @@
             password: "c=RVN",
             ssl: false,
           },
+          // log callback
           (msg) => {
             const text = typeof msg === "string" ? msg : JSON.stringify(msg);
             addLog(text, "info");
           },
           cpuWebMiner.ALL_THREADS,
-          (work) => addLog(`New job: ${work?.job_id ?? "?"}`, "info"),
-          (hashrate) => { $("hashrate").textContent = fmtHash(hashrate); },
+          // work callback
+          (work) => {
+            lastJobId = work?.job_id ?? work?.jobId ?? "?";
+            addLog(`New job: ${lastJobId}`, "info");
+          },
+          // hashrate callback — فقط وقتی share پیدا می‌شه صدا زده می‌شه
+          (hashrate) => {
+            const value = extractHashrate(hashrate);
+            if (value > 0) {
+              updateHashrate(value);
+              acceptedCount++;
+              $("accepted").textContent = acceptedCount;
+              addLog(`✓ share پیدا شد → ${fmtHash(value)}`, "ok");
+            }
+          },
+          // error callback
           (error) => {
-            addLog(`خطا: ${error?.message || error}`, "err");
+            const m = error?.message || error;
+            addLog(`خطا: ${m}`, "err");
             setStatus("خطا در ماینر", "err");
           }
         );
@@ -383,7 +401,7 @@
       }
     }
 
-    // ─── توقف ماینر ───
+    // ─── توقف ───
     function stopMiner() {
       try {
         cpuWebMiner.stop();
@@ -405,19 +423,28 @@
       if (e.key === "Enter" && !btnStart.disabled) btnStart.click();
     });
 
-    // ─── گزارش دوره‌ای آمار ───
+    // ─── گزارش زنده هر ۵ ثانیه ───
     setInterval(() => {
-      if (!minerRunning || !cpuWebMiner.minotaurxHashrate) return;
-      const stats = cpuWebMiner.minotaurxHashrate;
-      const acc = stats.sharesAccepted ?? 0;
-      const rej = stats.sharesRejected ?? 0;
-      $("accepted").textContent = acc;
-      $("rejected").textContent = rej;
-      addLog(`[Stats] ${fmtHash(stats.currentHashrateKHs)} | A:${acc} | R:${rej}`, "warn");
+      if (!minerRunning) return;
+
+      const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
+      const m = Math.floor(uptimeSec / 60);
+      const s = uptimeSec % 60;
+      const uptime = `${m}m ${pad(s)}s`;
+
+      const hrText = currentHashrate > 0
+        ? fmtHash(currentHashrate)
+        : "در انتظار share";
+
+      addLog(
+        `[Stats] HR:${hrText} | A:${acceptedCount} | R:${rejectedCount} | Job:${lastJobId} | Up:${uptime}`,
+        "warn"
+      );
     }, 5000);
 
     // ─── پیام خوش‌آمد ───
-    addLog("صفحه آماده است. آدرس کیف پول RVN را وارد کنید.", "info");
+    addLog("صفحه آماده است", "info");
+    addLog("آدرس کیف پول RVN را وارد و شروع کن", "info");
     setStatus("آماده برای شروع");
   </script>
 </body>
