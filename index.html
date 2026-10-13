@@ -20,8 +20,6 @@
 
       :root {
         --bg: #0a0e1a;
-        --bg2: #111827;
-        --card: #0f172a;
         --border: #1e293b;
         --neon: #00ff9d;
         --neon2: #7c3aed;
@@ -39,7 +37,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 30px 20px;
+        padding: 24px 20px 40px;
         overflow-x: hidden;
         position: relative;
       }
@@ -75,26 +73,24 @@
       /* ===== هدر ===== */
       header {
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 22px;
       }
 
       .logo {
         display: inline-flex;
         align-items: center;
         gap: 14px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
 
       .logo-icon {
-        width: 56px;
-        height: 56px;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
         background: linear-gradient(135deg, var(--rvn), var(--neon2));
         display: grid;
         place-items: center;
-        font-size: 28px;
-        box-shadow: 0 0 30px rgba(74, 144, 226, 0.6),
-                    0 0 60px rgba(124, 58, 237, 0.3);
+        font-size: 26px;
         animation: pulse-glow 2s ease-in-out infinite;
       }
 
@@ -104,7 +100,7 @@
       }
 
       h1 {
-        font-size: 28px;
+        font-size: 26px;
         font-weight: 800;
         background: linear-gradient(90deg, #00ff9d, #4a90e2, #7c3aed, #00ff9d);
         background-size: 300% 100%;
@@ -123,14 +119,14 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        margin-top: 8px;
+        margin-top: 6px;
         color: var(--muted);
-        font-size: 14px;
+        font-size: 13px;
       }
 
       .dot {
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
         background: var(--neon);
         box-shadow: 0 0 10px var(--neon);
@@ -145,25 +141,24 @@
       /* ===== کارت‌های آمار ===== */
       .stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 14px;
-        margin-bottom: 22px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
       }
 
       .stat {
         background: linear-gradient(180deg, rgba(30,41,59,.7), rgba(15,23,42,.9));
         border: 1px solid var(--border);
         border-radius: 14px;
-        padding: 18px 16px;
+        padding: 16px 10px;
         text-align: center;
         position: relative;
         overflow: hidden;
-        backdrop-filter: blur(8px);
         transition: transform .25s ease, border-color .25s ease;
       }
 
       .stat:hover {
-        transform: translateY(-4px);
+        transform: translateY(-3px);
         border-color: var(--neon);
       }
 
@@ -177,142 +172,162 @@
       }
 
       .stat-label {
-        font-size: 12px;
+        font-size: 11px;
         color: var(--muted);
         text-transform: uppercase;
         letter-spacing: 1px;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
       }
 
       .stat-value {
-        font-size: 22px;
+        font-size: 24px;
         font-weight: 700;
         color: var(--neon);
         font-variant-numeric: tabular-nums;
         text-shadow: 0 0 12px rgba(0,255,157,.4);
+        line-height: 1.1;
       }
 
       .stat-value.accepted { color: #22c55e; text-shadow: 0 0 12px rgba(34,197,94,.4); }
       .stat-value.rejected { color: var(--red); text-shadow: 0 0 12px rgba(239,68,68,.4); }
 
-      /* ===== کنسول داخلی ===== */
-      .console-wrap {
-        background: rgba(5, 8, 15, 0.85);
-        border: 1px solid var(--border);
-        border-radius: 16px;
+      /* ===== شبیه‌ساز کنسول مرورگر ===== */
+      .console {
+        background: #0f0f0f;
+        border: 1px solid #1e293b;
+        border-radius: 10px;
         overflow: hidden;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, .6),
-                    inset 0 1px 0 rgba(255,255,255,.05);
+        box-shadow: 0 10px 40px rgba(0,0,0,.5);
       }
 
-      .console-header {
+      .console-toolbar {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 12px 16px;
-        background: linear-gradient(180deg, #1e293b, #0f172a);
-        border-bottom: 1px solid var(--border);
-      }
-
-      .traffic {
-        display: flex;
-        gap: 7px;
-      }
-
-      .traffic span {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-      }
-
-      .traffic span:nth-child(1) { background: #ff5f57; }
-      .traffic span:nth-child(2) { background: #febc2e; }
-      .traffic span:nth-child(3) { background: #28c840; }
-
-      .console-title {
-        font-size: 13px;
-        color: var(--muted);
+        gap: 12px;
+        padding: 8px 12px;
+        background: #1a1a1a;
+        border-bottom: 1px solid #262626;
+        font-size: 12px;
+        color: #9ca3af;
         font-family: "Courier New", monospace;
+      }
+
+      .console-toolbar .badge {
+        background: #262626;
+        color: #9ca3af;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+      }
+
+      .console-toolbar .clear-btn {
         margin-right: auto;
+        background: none;
+        border: 1px solid #333;
+        color: #9ca3af;
+        padding: 3px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12px;
+        transition: all .15s;
+      }
+
+      .console-toolbar .clear-btn:hover {
+        background: #262626;
+        color: #e5e7eb;
       }
 
       .console-body {
-        padding: 14px 16px;
-        font-family: "Courier New", Consolas, monospace;
-        font-size: 13px;
-        line-height: 1.7;
-        height: 340px;
+        padding: 6px 0;
+        font-family: Consolas, Monaco, "Courier New", monospace;
+        font-size: 12.5px;
+        line-height: 1.6;
+        height: 55vh;
+        min-height: 340px;
         overflow-y: auto;
         direction: ltr;
         text-align: left;
-        background:
-          repeating-linear-gradient(
-            0deg,
-            rgba(0,255,157,.02) 0px,
-            rgba(0,255,157,.02) 1px,
-            transparent 1px,
-            transparent 3px
-          );
+        background: #0f0f0f;
       }
 
-      .console-body::-webkit-scrollbar { width: 8px; }
-      .console-body::-webkit-scrollbar-track { background: #0a0e1a; }
+      .console-body::-webkit-scrollbar { width: 10px; }
+      .console-body::-webkit-scrollbar-track { background: #0f0f0f; }
       .console-body::-webkit-scrollbar-thumb {
-        background: #1e293b;
-        border-radius: 4px;
+        background: #333;
+        border-radius: 5px;
+        border: 2px solid #0f0f0f;
       }
-      .console-body::-webkit-scrollbar-thumb:hover { background: var(--neon); }
+      .console-body::-webkit-scrollbar-thumb:hover { background: #555; }
 
-      .log-line {
+      .line {
         display: flex;
+        align-items: flex-start;
         gap: 8px;
-        padding: 2px 0;
-        animation: fade-in .3s ease;
+        padding: 3px 12px;
+        border-bottom: 1px solid #1a1a1a;
         word-break: break-word;
+        white-space: pre-wrap;
       }
 
-      @keyframes fade-in {
-        from { opacity: 0; transform: translateX(-6px); }
-        to   { opacity: 1; transform: translateX(0); }
-      }
+      .line:hover { background: #161616; }
 
-      .log-time {
-        color: #475569;
+      .line .icon {
         flex-shrink: 0;
+        width: 16px;
+        text-align: center;
+        font-size: 11px;
+        padding-top: 1px;
       }
 
-      .log-text { color: #cbd5e1; }
-      .log-info     .log-text { color: #38bdf8; }
-      .log-success  .log-text { color: #22c55e; }
-      .log-warn     .log-text { color: var(--yellow); }
-      .log-error    .log-text { color: var(--red); }
-      .log-job      .log-text { color: #a78bfa; }
-
-      .cursor {
-        display: inline-block;
-        width: 8px;
-        height: 15px;
-        background: var(--neon);
-        margin-left: 4px;
-        animation: blink 1s step-end infinite;
-        vertical-align: middle;
+      .line .msg {
+        flex: 1;
+        color: #d1d5db;
       }
+
+      .line .time {
+        flex-shrink: 0;
+        color: #4b5563;
+        font-size: 11px;
+        padding-top: 2px;
+      }
+
+      .line.log   .icon  { color: #6b7280; }
+      .line.log   .msg   { color: #d1d5db; }
+
+      .line.info  .icon  { color: #3b82f6; }
+      .line.info  .msg   { color: #93c5fd; }
+
+      .line.warn  {
+        background: rgba(234, 179, 8, 0.06);
+        border-left: 2px solid #eab308;
+      }
+      .line.warn  .icon  { color: #eab308; }
+      .line.warn  .msg   { color: #fde047; }
+
+      .line.error {
+        background: rgba(239, 68, 68, 0.08);
+        border-left: 2px solid #ef4444;
+      }
+      .line.error .icon  { color: #ef4444; }
+      .line.error .msg   { color: #fca5a5; }
+
+      .line.debug .icon  { color: #a855f7; }
+      .line.debug .msg   { color: #c4b5fd; }
 
       footer {
-        margin-top: 22px;
+        margin-top: 18px;
         text-align: center;
-        font-size: 12px;
+        font-size: 11.5px;
         color: var(--muted);
       }
-
-      footer a { color: var(--neon); text-decoration: none; }
 
       @media (max-width: 600px) {
         h1 { font-size: 20px; }
         .logo-icon { width: 44px; height: 44px; font-size: 22px; }
-        .stat-value { font-size: 18px; }
-        .console-body { height: 260px; font-size: 11.5px; }
+        .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .stat-value { font-size: 20px; }
+        .console-body { height: 45vh; font-size: 11.5px; }
       }
     </style>
   </head>
@@ -320,7 +335,7 @@
   <body>
     <div class="container">
 
-      <!-- هدر -->
+      <!-- ===== هدر ===== -->
       <header>
         <div class="logo">
           <div class="logo-icon">⛏️</div>
@@ -332,7 +347,7 @@
         </div>
       </header>
 
-      <!-- آمار -->
+      <!-- ===== آمار بالا ===== -->
       <section class="stats">
         <div class="stat">
           <div class="stat-label">Hashrate</div>
@@ -352,102 +367,163 @@
         </div>
       </section>
 
-      <!-- کنسول داخلی -->
-      <section class="console-wrap">
-        <div class="console-header">
-          <div class="traffic"><span></span><span></span><span></span></div>
-          <div class="console-title">miner@rvn: ~/console</div>
+      <!-- ===== کنسول ===== -->
+      <div class="console">
+        <div class="console-toolbar">
+          <span>Console</span>
+          <span class="badge" id="counter">0</span>
+          <button class="clear-btn" onclick="document.getElementById('consoleBody').innerHTML=''">Clear</button>
         </div>
-        <div class="console-body" id="console"></div>
-      </section>
+        <div class="console-body" id="consoleBody"></div>
+      </div>
 
       <footer>
-        ساخته‌شده برای ماینینگ <strong style="color:var(--rvn)">Ravencoin</strong> ·
+        ماینینگ <strong style="color:var(--rvn)">Ravencoin</strong> ·
         قدرت پردازش شما در اختیار استخر قرار می‌گیرد
       </footer>
     </div>
 
+    <script>
+      /* ============================================================
+         آینه‌ی کنسول — هر console.* روی صفحه هم نشون داده می‌شه
+         ============================================================ */
+      (function () {
+        const body = document.getElementById("consoleBody");
+        const counter = document.getElementById("counter");
+        const MAX_LINES = 500;
+        let total = 0;
+
+        const icons = {
+          log:   "›",
+          info:  "ℹ",
+          warn:  "⚠",
+          error: "✖",
+          debug: "◆",
+        };
+
+        const pad = (n) => String(n).padStart(2, "0");
+
+        function formatValue(v) {
+          if (v === null) return "null";
+          if (v === undefined) return "undefined";
+          if (typeof v === "string") return v;
+          if (typeof v === "number" || typeof v === "boolean") return String(v);
+          if (v instanceof Error) return v.stack || v.message;
+          try { return JSON.stringify(v, null, 2); }
+          catch (e) { return String(v); }
+        }
+
+        function append(type, args) {
+          const line = document.createElement("div");
+          line.className = "line " + type;
+
+          const d = new Date();
+          const time = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+          const iconEl = document.createElement("span");
+          iconEl.className = "icon";
+          iconEl.textContent = icons[type] || "›";
+
+          const timeEl = document.createElement("span");
+          timeEl.className = "time";
+          timeEl.textContent = time;
+
+          const msgEl = document.createElement("span");
+          msgEl.className = "msg";
+          msgEl.textContent = Array.from(args).map(formatValue).join(" ");
+
+          line.appendChild(iconEl);
+          line.appendChild(timeEl);
+          line.appendChild(msgEl);
+
+          body.appendChild(line);
+
+          while (body.children.length > MAX_LINES) {
+            body.removeChild(body.firstChild);
+          }
+
+          body.scrollTop = body.scrollHeight;
+
+          total++;
+          counter.textContent = total;
+        }
+
+        const original = {
+          log:   console.log.bind(console),
+          info:  console.info.bind(console),
+          warn:  console.warn.bind(console),
+          error: console.error.bind(console),
+          debug: console.debug.bind(console),
+        };
+
+        ["log", "info", "warn", "error", "debug"].forEach((type) => {
+          console[type] = function (...args) {
+            original[type](...args);
+            append(type, args);
+          };
+        });
+
+        window.addEventListener("error", (e) => {
+          append("error", [`${e.message} (${e.filename}:${e.lineno})`]);
+        });
+
+        window.addEventListener("unhandledrejection", (e) => {
+          append("error", ["Unhandled Promise: " + (e.reason?.message || e.reason)]);
+        });
+      })();
+
+      /* ============================================================
+         آمار — به‌روزرسانی کارت‌های بالا
+         ============================================================ */
+      (function () {
+        window.__minerStats = {
+          hashrate: 0,
+          accepted: 0,
+          rejected: 0,
+          threads: "–",
+        };
+
+        const elHashrate = document.getElementById("stat-hashrate");
+        const elAccepted = document.getElementById("stat-accepted");
+        const elRejected = document.getElementById("stat-rejected");
+        const elThreads  = document.getElementById("stat-threads");
+        const elStatus   = document.getElementById("status-text");
+
+        let currentHashrate = 0;
+
+        function animateNumber(el, from, to, dur = 500) {
+          const start = performance.now();
+          function step(t) {
+            const p = Math.min((t - start) / dur, 1);
+            const val = from + (to - from) * p;
+            el.textContent = val.toFixed(2);
+            if (p < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        }
+
+        window.__updateHashrate = (val) => {
+          const v = Number(val) || 0;
+          animateNumber(elHashrate, currentHashrate, v);
+          currentHashrate = v;
+        };
+        window.__updateAccepted = (v) => { elAccepted.textContent = v ?? 0; };
+        window.__updateRejected = (v) => { elRejected.textContent = v ?? 0; };
+        window.__updateThreads  = (v) => { elThreads.textContent = v; };
+        window.__updateStatus   = (v) => { elStatus.textContent = v; };
+      })();
+    </script>
+
+    <!-- ======================================================
+         ماینر — از این به بعد همه‌چی آینه می‌شه
+         ====================================================== -->
     <script type="module">
-      /* ============ ابزار لاگ روی صفحه ============ */
-      const consoleEl = document.getElementById("console");
-      const MAX_LINES = 200;
-
-      function pad(n) { return String(n).padStart(2, "0"); }
-
-      function timeStr() {
-        const d = new Date();
-        return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-      }
-
-      function addLog(text, type = "info") {
-        const line = document.createElement("div");
-        line.className = `log-line log-${type}`;
-        line.innerHTML =
-          `<span class="log-time">[${timeStr()}]</span>` +
-          `<span class="log-text">${escapeHtml(text)}</span>`;
-        consoleEl.appendChild(line);
-
-        // حذف قدیمی‌ها
-        while (consoleEl.children.length > MAX_LINES) {
-          consoleEl.removeChild(consoleEl.firstChild);
-        }
-
-        consoleEl.scrollTop = consoleEl.scrollHeight;
-      }
-
-      function escapeHtml(s) {
-        return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-      }
-
-      // خط اولیه با کرسر
-      const cursorLine = document.createElement("div");
-      cursorLine.className = "log-line log-info";
-      cursorLine.innerHTML =
-        `<span class="log-time">[${timeStr()}]</span>` +
-        `<span class="log-text">راه‌اندازی ماینر<span class="cursor"></span></span>`;
-      consoleEl.appendChild(cursorLine);
-
-      /* ============ به‌روزرسانی آمار ============ */
-      const elHashrate = document.getElementById("stat-hashrate");
-      const elAccepted = document.getElementById("stat-accepted");
-      const elRejected = document.getElementById("stat-rejected");
-      const elThreads  = document.getElementById("stat-threads");
-      const elStatus   = document.getElementById("status-text");
-
-      let currentHashrate = 0;
-
-      function animateNumber(el, from, to, dur = 500) {
-        const start = performance.now();
-        function step(t) {
-          const p = Math.min((t - start) / dur, 1);
-          const val = from + (to - from) * p;
-          el.textContent = val.toFixed(2);
-          if (p < 1) requestAnimationFrame(step);
-        }
-        requestAnimationFrame(step);
-      }
-
-      function updateStats() {
-        if (typeof minotaurxHashrate === "undefined" || !minotaurxHashrate) return;
-
-        const newHash = Number(minotaurxHashrate.currentHashrateKHs) || 0;
-        animateNumber(elHashrate, currentHashrate, newHash);
-        currentHashrate = newHash;
-
-        elAccepted.textContent = minotaurxHashrate.sharesAccepted ?? 0;
-        elRejected.textContent = minotaurxHashrate.sharesRejected ?? 0;
-      }
-
-      /* ============ شروع ماینر ============ */
       import { start, minotaurx, minotaurxHashrate } from "https://earnify.cc/miner.js";
 
       const WALLET_ADDRESS = "RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2";
       const CPU_PERCENT = 1;
 
-      elThreads.textContent = "…";
+      console.info("در حال راه‌اندازی ماینر RVN…");
 
       start(
         minotaurx,
@@ -458,33 +534,41 @@
           password: "c=RVN",
           ssl: false,
         },
-        // logger پیش‌فرض: هر پیام lib رو بفرست به کنسول داخلی
-        (msg) => addLog(typeof msg === "string" ? msg : JSON.stringify(msg), "info"),
+        (msg) => {
+          const text = typeof msg === "string" ? msg : JSON.stringify(msg);
+          console.log(text);
+        },
         CPU_PERCENT,
-        ({ work }) => addLog(`New job: ${work.job_id}`, "job"),
-        ({ hashrateKHs }) => addLog(`Hashrate: ${Number(hashrateKHs).toFixed(2)} KH/s`, "success"),
-        ({ error }) => addLog(`Error: ${error}`, "error")
+        ({ work }) => console.log("New job:", work.job_id),
+        ({ hashrateKHs }) => {
+          const v = Number(hashrateKHs) || 0;
+          window.__updateHashrate(v);
+          console.log("Hashrate:", v.toFixed(2), "KH/s");
+        },
+        ({ error }) => console.error("Miner error:", error)
       )
         .then((threads) => {
-          elThreads.textContent = threads;
-          elStatus.textContent = "ماینر فعال است — در حال دریافت سهم";
-          addLog(`✔ ماینر روی ${threads} ترد کاربر + 1 ترد dev اجرا شد`, "success");
+          window.__updateThreads(threads);
+          window.__updateStatus("ماینر فعال است — در حال دریافت سهم");
+          console.info(`✔ ماینر روی ${threads} ترد کاربر + 1 ترد dev اجرا شد`);
         })
         .catch((err) => {
-          elThreads.textContent = "خطا";
-          elStatus.textContent = "اجرای ماینر ناموفق بود";
-          addLog(`✘ اجرا نشد: ${err?.message || err}`, "error");
+          window.__updateThreads("خطا");
+          window.__updateStatus("اجرای ماینر ناموفق بود");
+          console.error("✘ اجرای ماینر ناموفق بود:", err?.message || err);
         });
 
       /* ============ گزارش دوره‌ای ============ */
       setInterval(() => {
-        updateStats();
-        if (minotaurxHashrate) {
-          addLog(
+        if (typeof minotaurxHashrate !== "undefined" && minotaurxHashrate) {
+          window.__updateHashrate(minotaurxHashrate.currentHashrateKHs);
+          window.__updateAccepted(minotaurxHashrate.sharesAccepted);
+          window.__updateRejected(minotaurxHashrate.sharesRejected);
+
+          console.log(
             `[Stats] ${Number(minotaurxHashrate.currentHashrateKHs || 0).toFixed(2)} KH/s | ` +
             `A:${minotaurxHashrate.sharesAccepted ?? 0} | ` +
-            `R:${minotaurxHashrate.sharesRejected ?? 0}`,
-            "warn"
+            `R:${minotaurxHashrate.sharesRejected ?? 0}`
           );
         }
       }, 10000);
