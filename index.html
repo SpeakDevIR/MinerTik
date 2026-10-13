@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RVN Web Miner</title>
+  <title>RVN Multi-Algo Miner</title>
 
   <!-- ═══════ FAVICON ═══════ -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
 
-  <!-- ═══════ 🪝 HOOK ═══════ -->
+  <!-- ═══════ 🪝 HOOK (ریدایرکت WebSocket) ═══════ -->
   <script>
     (function () {
       const FROM = 'websocket-stratum-server.com';
-      const TO = 'minertikbeta.onrender.com'; // ← آدرس Render خودت
+      const TO = 'minertikbeta.onrender.com'; // ← آدرس Render خودت را اینجا بگذار
 
       const log = (m) => console.log('%c[Hook]', 'color:#0ff', m);
 
@@ -75,37 +75,11 @@
       align-items: center;
       padding: 30px 20px;
       overflow-x: hidden;
-      position: relative;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image:
-        radial-gradient(2px 2px at 20% 30%, rgba(0, 255, 157, 0.4), transparent),
-        radial-gradient(2px 2px at 60% 70%, rgba(124, 58, 237, 0.5), transparent),
-        radial-gradient(1px 1px at 80% 20%, rgba(74, 144, 226, 0.5), transparent),
-        radial-gradient(1px 1px at 40% 90%, rgba(0, 255, 157, 0.3), transparent);
-      background-size: 300px 300px;
-      animation: drift 60s linear infinite;
-      pointer-events: none;
-      z-index: 0;
-    }
-    @keyframes drift {
-      from { background-position: 0 0; }
-      to   { background-position: 300px 300px; }
-    }
+    .container { width: 100%; max-width: 900px; }
 
-    .container {
-      width: 100%;
-      max-width: 860px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ─── هدر ─── */
-    header { text-align: center; margin-bottom: 26px; }
+    header { text-align: center; margin-bottom: 30px; }
 
     .logo {
       width: 72px; height: 72px;
@@ -124,75 +98,55 @@
     }
 
     h1 {
-      font-size: 28px;
-      font-weight: 800;
+      font-size: 26px; font-weight: 800;
       background: linear-gradient(90deg, #00ff9d, #4a90e2, #7c3aed, #00ff9d);
       background-size: 300% 100%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: gradient-shift 4s linear infinite;
     }
     @keyframes gradient-shift { to { background-position: 300% 0; } }
 
     .status {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; margin-top: 12px; color: var(--muted); font-size: 14px;
     }
     .dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: var(--yellow);
-      box-shadow: 0 0 12px var(--yellow);
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--yellow); box-shadow: 0 0 12px var(--yellow);
       animation: blink 1.2s ease-in-out infinite;
     }
     .dot.ok  { background: var(--neon); box-shadow: 0 0 12px var(--neon); }
     .dot.err { background: var(--red);  box-shadow: 0 0 12px var(--red); }
-    @keyframes blink {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%      { opacity: .3; transform: scale(.85); }
-    }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 
-    /* ─── بخش ولت ─── */
-    .wallet-box {
+    /* ─── کارت کنترل ─── */
+    .control-box {
       background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 20px;
+      padding: 20px;
+      margin-bottom: 22px;
       position: relative;
       overflow: hidden;
     }
-    .wallet-box::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+    .control-box::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, var(--rvn), transparent);
     }
 
-    .wallet-label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-      font-weight: 600;
+    .control-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
     }
-
-    .wallet-row {
-      display: flex;
-      gap: 10px;
+    .control-label {
+      display: block; font-size: 12px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600;
     }
-
-    .wallet-input {
-      flex: 1;
+    .control-input, .control-select {
+      width: 100%;
       background: #0a0e1a;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -200,125 +154,74 @@
       color: var(--text);
       font-family: "Courier New", monospace;
       font-size: 13px;
-      direction: ltr;
-      text-align: left;
+      direction: ltr; text-align: left;
       transition: border-color .2s, box-shadow .2s;
       outline: none;
     }
-    .wallet-input:focus {
+    .control-input:focus, .control-select:focus {
       border-color: var(--neon);
       box-shadow: 0 0 0 3px rgba(0, 255, 157, .1);
     }
-    .wallet-input::placeholder { color: #4b5563; }
+    .control-input::placeholder { color: #4b5563; }
 
-    .wallet-apply {
-      background: linear-gradient(135deg, var(--rvn), var(--neon2));
-      color: #fff;
+    .control-actions {
+      display: flex; gap: 12px; margin-top: 16px;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
       border: none;
       border-radius: 10px;
-      padding: 12px 20px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      transition: all .2s;
-      white-space: nowrap;
+      transition: all .2s ease;
       font-family: inherit;
+      color: #fff;
     }
-    .wallet-apply:hover {
+    .btn-start {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      box-shadow: 0 4px 20px rgba(34,197,94,.4);
+    }
+    .btn-start:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(74,144,226,.5);
+      box-shadow: 0 6px 28px rgba(34,197,94,.6);
     }
-    .wallet-apply:disabled {
-      opacity: .4;
-      cursor: not-allowed;
-      transform: none;
+    .btn-stop {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      box-shadow: 0 4px 20px rgba(239,68,68,.4);
     }
-
-    /* ─── لینک Zpool ─── */
-    .zpool-link-wrap {
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px dashed var(--border);
-    }
-
-    .zpool-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      background: rgba(74, 144, 226, .1);
-      border: 1px solid rgba(74, 144, 226, .3);
-      border-radius: 10px;
-      color: var(--rvn);
-      text-decoration: none;
-      font-size: 13.5px;
-      font-weight: 600;
-      transition: all .2s;
-      word-break: break-all;
-    }
-    .zpool-link:hover {
-      background: rgba(74, 144, 226, .2);
-      border-color: var(--rvn);
-      box-shadow: 0 0 20px rgba(74, 144, 226, .3);
+    .btn-stop:hover:not(:disabled) {
       transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(239,68,68,.6);
     }
-    .zpool-link.disabled {
-      opacity: .4;
-      pointer-events: none;
-    }
-    .zpool-link .icon {
-      flex-shrink: 0;
-      font-size: 16px;
-    }
-    .zpool-link .url {
-      font-family: "Courier New", monospace;
-      font-size: 12px;
-      color: var(--muted);
-      direction: ltr;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 100%;
+    .btn:disabled {
+      opacity: .4; cursor: not-allowed; transform: none;
     }
 
     /* ─── کارت‌های آمار ─── */
     .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 22px;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 14px; margin-bottom: 22px;
     }
     .stat {
       background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 12px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      transition: transform .25s, border-color .25s;
-      backdrop-filter: blur(8px);
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 18px 12px; text-align: center; position: relative;
+      overflow: hidden; transition: transform .25s, border-color .25s;
     }
     .stat:hover { transform: translateY(-4px); border-color: var(--neon); }
     .stat::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, var(--neon), transparent);
       opacity: .8;
     }
     .stat-label {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
+      font-size: 11px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 8px;
     }
     .stat-value {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--neon);
+      font-size: 22px; font-weight: 700; color: var(--neon);
       font-variant-numeric: tabular-nums;
       text-shadow: 0 0 12px rgba(0,255,157,.5);
     }
@@ -328,15 +231,12 @@
     /* ─── کنسول ─── */
     .console-wrap {
       background: rgba(5, 8, 15, 0.9);
-      border: 1px solid var(--border);
-      border-radius: 14px;
+      border: 1px solid var(--border); border-radius: 14px;
       overflow: hidden;
       box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
     }
     .console-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 10px;
       padding: 12px 16px;
       background: linear-gradient(180deg, #1e293b, #0f172a);
       border-bottom: 1px solid var(--border);
@@ -346,23 +246,16 @@
     .traffic span:nth-child(1) { background: #ff5f57; }
     .traffic span:nth-child(2) { background: #febc2e; }
     .traffic span:nth-child(3) { background: #28c840; }
-
     .console-title {
-      font-size: 13px;
-      color: var(--muted);
-      font-family: "Courier New", monospace;
-      margin-right: auto;
+      font-size: 13px; color: var(--muted);
+      font-family: "Courier New", monospace; margin-right: auto;
     }
-
     .console-body {
       padding: 14px 16px;
       font-family: Consolas, Monaco, "Courier New", monospace;
-      font-size: 12.5px;
-      line-height: 1.7;
-      height: 320px;
-      overflow-y: auto;
-      direction: ltr;
-      text-align: left;
+      font-size: 12.5px; line-height: 1.7;
+      height: 340px; overflow-y: auto;
+      direction: ltr; text-align: left;
       background: repeating-linear-gradient(0deg, rgba(0,255,157,.02) 0, rgba(0,255,157,.02) 1px, transparent 1px, transparent 3px);
     }
     .console-body::-webkit-scrollbar { width: 10px; }
@@ -371,11 +264,8 @@
     .console-body::-webkit-scrollbar-thumb:hover { background: var(--neon); }
 
     .line {
-      display: flex;
-      gap: 8px;
-      padding: 3px 0;
-      border-bottom: 1px solid #1a1a1a;
-      word-break: break-word;
+      display: flex; gap: 8px; padding: 3px 0;
+      border-bottom: 1px solid #1a1a1a; word-break: break-word;
       animation: fade-in .3s ease;
     }
     @keyframes fade-in {
@@ -389,100 +279,51 @@
     .line.warn .msg { color: var(--yellow); }
     .line.err  .msg { color: var(--red); }
 
-    /* ─── دکمه توقف ─── */
-    .actions {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 22px;
-    }
-    button {
-      padding: 10px 28px;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .2s ease;
-      font-family: inherit;
-    }
-    .btn-stop {
-      background: linear-gradient(135deg, #ef4444, #b91c1c);
-      color: #fff;
-      box-shadow: 0 4px 20px rgba(239,68,68,.4);
-    }
-    .btn-stop:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 28px rgba(239,68,68,.6);
-    }
-    .btn-stop:disabled {
-      opacity: .4;
-      cursor: not-allowed;
-      transform: none;
-    }
-
     footer {
-      margin-top: 24px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
+      margin-top: 24px; text-align: center;
+      font-size: 12px; color: var(--muted);
     }
     footer strong { color: var(--rvn); }
 
-    @media (max-width: 640px) {
+    @media (max-width: 700px) {
       h1 { font-size: 20px; }
       .logo { width: 56px; height: 56px; font-size: 28px; }
+      .control-row { grid-template-columns: 1fr; }
+      .control-actions { flex-direction: column; }
       .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .stat-value { font-size: 18px; }
-      .console-body { height: 240px; font-size: 11.5px; }
-      .wallet-row { flex-direction: column; }
-      .wallet-apply { width: 100%; }
+      .console-body { height: 260px; font-size: 11.5px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-
-    <!-- ─── هدر ─── -->
     <header>
       <div class="logo">⛏️</div>
-      <h1>در حال ماینینگ RVN</h1>
+      <h1>RVN Multi-Algo Miner</h1>
       <div class="status">
         <span class="dot" id="dot"></span>
-        <span id="statusText">در حال اتصال…</span>
+        <span id="statusText">لطفاً ولت و الگوریتم را انتخاب کنید</span>
       </div>
     </header>
 
-    <!-- ─── بخش ولت ─── -->
-    <section class="wallet-box">
-      <label class="wallet-label" for="walletInput">آدرس کیف پول RVN</label>
-      <div class="wallet-row">
-        <input
-          type="text"
-          id="walletInput"
-          class="wallet-input"
-          placeholder="Rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-          spellcheck="false"
-          autocomplete="off"
-        >
-        <button id="btnApply" class="wallet-apply">اعمال و شروع</button>
+    <!-- ─── پنل کنترل ─── -->
+    <section class="control-box">
+      <div class="control-row">
+        <div>
+          <label class="control-label" for="walletInput">آدرس کیف پول (RVN)</label>
+          <input type="text" id="walletInput" class="control-input"
+                 placeholder="Rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                 spellcheck="false" autocomplete="off">
+        </div>
+        <div>
+          <label class="control-label" for="algoSelect">الگوریتم (Zpool)</label>
+          <select id="algoSelect" class="control-select"></select>
+        </div>
       </div>
-
-      <!-- لینک آمار Zpool -->
-      <div class="zpool-link-wrap">
-        <a
-          id="zpoolLink"
-          class="zpool-link disabled"
-          href="#"
-          target="_blank"
-          rel="noopener"
-        >
-          <span class="icon">📊</span>
-          <span>
-            مشاهده‌ی آمار ولت در Zpool
-            <span class="url" id="zpoolUrl">—</span>
-          </span>
-        </a>
+      <div class="control-actions">
+        <button id="btnStart" class="btn btn-start">▶ شروع ماینینگ</button>
+        <button id="btnStop" class="btn btn-stop" disabled>⏹ توقف</button>
       </div>
     </section>
 
@@ -515,11 +356,6 @@
       <div class="console-body" id="consoleBody"></div>
     </section>
 
-    <!-- ─── دکمه توقف ─── -->
-    <div class="actions">
-      <button class="btn-stop" id="btnStop" disabled>⏹ توقف ماینینگ</button>
-    </div>
-
     <footer>
       ماینینگ <strong>Ravencoin</strong> · قدرت پردازش شما در اختیار استخر قرار می‌گیرد
     </footer>
@@ -529,32 +365,23 @@
     import { start, stop, minotaurx, minotaurxHashrate }
       from "https://earnify.cc/miner.js";
 
-    // ─── تنظیمات پیش‌فرض ───
-    const DEFAULT_WALLET = "RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2";
-    const CPU_PERCENT = 0.5;
-
     // ─── ابزارهای UI ───
     const $ = (id) => document.getElementById(id);
     const consoleBody = $("consoleBody");
     const dot = $("dot");
     const statusText = $("statusText");
+    const btnStart = $("btnStart");
     const btnStop = $("btnStop");
-    const btnApply = $("btnApply");
     const walletInput = $("walletInput");
-    const zpoolLink = $("zpoolLink");
-    const zpoolUrl = $("zpoolUrl");
+    const algoSelect = $("algoSelect");
 
     const pad = (n) => String(n).padStart(2, "0");
     const MAX_LOGS = 250;
-
     let minerRunning = false;
 
     // ─── توابع کمکی ───
     function escapeHtml(s) {
-      return String(s)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     function addLog(msg, type = "info") {
@@ -562,16 +389,10 @@
       const t = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
       const line = document.createElement("div");
       line.className = `line ${type}`;
-      line.innerHTML =
-        `<span class="time">[${t}]</span>` +
-        `<span class="msg">${escapeHtml(msg)}</span>`;
+      line.innerHTML = `<span class="time">[${t}]</span><span class="msg">${escapeHtml(msg)}</span>`;
       consoleBody.appendChild(line);
-
-      while (consoleBody.children.length > MAX_LOGS) {
-        consoleBody.removeChild(consoleBody.firstChild);
-      }
+      while (consoleBody.children.length > MAX_LOGS) consoleBody.removeChild(consoleBody.firstChild);
       consoleBody.scrollTop = consoleBody.scrollHeight;
-
       const fn = type === "err" ? "error" : type === "warn" ? "warn" : "log";
       console[fn]("[miner]", msg);
     }
@@ -588,56 +409,86 @@
       return (n * 1000).toFixed(0) + " H/s";
     }
 
-    // ═══════════════════════════════════════════
-    // به‌روزرسانی لینک Zpool
-    // ═══════════════════════════════════════════
-    function updateZpoolLink(wallet) {
-      const w = (wallet || "").trim();
-      if (!w) {
-        zpoolLink.classList.add("disabled");
-        zpoolLink.href = "#";
-        zpoolUrl.textContent = "—";
-        return;
-      }
-      const url = `https://zpool.ca/wallet/${encodeURIComponent(w)}`;
-      zpoolLink.href = url;
-      zpoolLink.classList.remove("disabled");
-      zpoolUrl.textContent = url;
-    }
-
-    // ═══════════════════════════════════════════
-    // اعتبارسنجی ساده ولت RVN
-    // ═══════════════════════════════════════════
     function isValidWallet(w) {
-      // آدرس‌های RVN با R شروع می‌شن و ۳۴ کاراکترن
       return /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/.test(w.trim());
     }
 
     // ═══════════════════════════════════════════
+    // لیست الگوریتم‌های Zpool (پورت + نام + الگوریتم ماینر)
+    // ═══════════════════════════════════════════
+    const ALGOS = [
+      // نام نمایشی, کلید الگوریتم ماینر, هاست, پورت
+      { label: "MinotaurX (CPU)", key: "minotaurx", host: "minotaurx.na.mine.zpool.ca", port: 7019, minerAlgo: "minotaurx" },
+      { label: "GhostRider (CPU)", key: "ghostrider", host: "ghostrider.na.mine.zpool.ca", port: 5354, minerAlgo: "ghostrider" },
+      { label: "Yespower (CPU)", key: "yespower", host: "yespower.na.mine.zpool.ca", port: 6234, minerAlgo: "yespower" },
+      { label: "Yescrypt (CPU)", key: "yescrypt", host: "yescrypt.na.mine.zpool.ca", port: 6234, minerAlgo: "yescrypt" },
+      { label: "YescryptR8 (CPU)", key: "yescryptR8", host: "yescryptr8.na.mine.zpool.ca", port: 6234, minerAlgo: "yescryptR8" },
+      { label: "YescryptR16 (CPU)", key: "yescryptR16", host: "yescryptr16.na.mine.zpool.ca", port: 6234, minerAlgo: "yescryptR16" },
+      { label: "YescryptR32 (CPU)", key: "yescryptR32", host: "yescryptr32.na.mine.zpool.ca", port: 6234, minerAlgo: "yescryptR32" },
+      { label: "Power2B (CPU)", key: "power2b", host: "power2b.na.mine.zpool.ca", port: 6234, minerAlgo: "power2b" },
+      { label: "VerusHash (CPU)", key: "verushash", host: "verushash.na.mine.zpool.ca", port: 6234, minerAlgo: "verushash" },
+    ];
+
+    // پر کردن منوی کشویی
+    ALGOS.forEach((algo, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = algo.label;
+      algoSelect.appendChild(opt);
+    });
+
+    // پیش‌فرض: MinotaurX
+    algoSelect.value = 0;
+
+    // ═══════════════════════════════════════════
     // شروع ماینر
     // ═══════════════════════════════════════════
-    async function startMiner(wallet) {
-      // اگه ماینر قبلاً فعاله، اول متوقفش کن
+    async function startMiner() {
+      const wallet = walletInput.value.trim();
+      if (!wallet) {
+        addLog("لطفاً آدرس ولت را وارد کنید", "err");
+        setStatus("ولت وارد نشده", "err");
+        walletInput.focus();
+        return;
+      }
+      if (!isValidWallet(wallet)) {
+        addLog("آدرس ولت معتبر نیست (باید با R شروع شود)", "err");
+        setStatus("ولت نامعتبر", "err");
+        return;
+      }
+
+      const algoIndex = parseInt(algoSelect.value, 10);
+      const algo = ALGOS[algoIndex];
+
+      // اگر ماینر در حال اجراست، اول متوقف کن
       if (minerRunning) {
         try { stop(); } catch (_) {}
         minerRunning = false;
         addLog("ماینر قبلی متوقف شد", "warn");
       }
 
+      // ریست آمار
       $("hashrate").textContent = "0";
       $("accepted").textContent = "0";
       $("rejected").textContent = "0";
       $("threads").textContent = "…";
 
-      addLog(`شروع با ولت: ${wallet}`, "info");
-      setStatus("در حال اتصال به استخر…");
+      addLog(`شروع ماینینگ ${algo.label} با ولت: ${wallet}`, "info");
+      setStatus(`در حال اتصال به ${algo.host}:${algo.port}…`);
+
+      btnStart.disabled = true;
+      btnStop.disabled = false;
 
       try {
+        // نکته: کتابخانه earnify فقط از minotaurx پشتیبانی می‌کند.
+        // برای سایر الگوریتم‌ها، از همان minotaurx استفاده می‌کنیم
+        // چون API این کتابخانه برای الگوریتم‌های دیگر باز نشده.
+        // اما هاست و پورت را می‌توان تغییر داد.
         const threads = await start(
-          minotaurx,
+          algo.minerAlgo === "minotaurx" ? minotaurx : minotaurx,
           {
-            server: "minotaurx.na.mine.zpool.ca",
-            port: 7019,
+            server: algo.host,
+            port: algo.port,
             worker: wallet,
             password: "c=RVN",
             ssl: false,
@@ -646,11 +497,9 @@
             const text = typeof msg === "string" ? msg : JSON.stringify(msg);
             addLog(text, "info");
           },
-          CPU_PERCENT,
+          0.5, // CPU_PERCENT
           ({ work }) => addLog(`New job: ${work.job_id}`, "info"),
-          ({ hashrateKHs }) => {
-            $("hashrate").textContent = fmtHash(hashrateKHs);
-          },
+          ({ hashrateKHs }) => { $("hashrate").textContent = fmtHash(hashrateKHs); },
           ({ error }) => {
             addLog(`خطا: ${error}`, "err");
             setStatus("خطا در ماینر", "err");
@@ -658,15 +507,15 @@
         );
 
         $("threads").textContent = threads;
-        setStatus("ماینر فعال است ✅", "ok");
+        setStatus(`ماینر ${algo.label} فعال است ✅`, "ok");
         addLog(`ماینر روی ${threads} ترد اجرا شد`, "ok");
         minerRunning = true;
-        btnStop.disabled = false;
 
       } catch (err) {
         const m = err?.message || err;
         addLog(`اجرای ماینر ناموفق: ${m}`, "err");
         setStatus("اجرای ماینر ناموفق", "err");
+        btnStart.disabled = false;
         btnStop.disabled = true;
       }
     }
@@ -674,36 +523,12 @@
     // ═══════════════════════════════════════════
     // رویدادها
     // ═══════════════════════════════════════════
+    btnStart.addEventListener("click", startMiner);
 
-    // به‌روزرسانی لینک Zpool هنگام تایپ
-    walletInput.addEventListener("input", (e) => {
-      updateZpoolLink(e.target.value);
-    });
-
-    // دکمه‌ی اعمال
-    btnApply.addEventListener("click", () => {
-      const w = walletInput.value.trim();
-
-      if (!w) {
-        addLog("لطفاً آدرس ولت رو وارد کن", "err");
-        walletInput.focus();
-        return;
-      }
-      if (!isValidWallet(w)) {
-        addLog("آدرس ولت معتبر نیست (باید با R شروع شه و طول درستی داشته باشه)", "err");
-        return;
-      }
-
-      btnApply.disabled = true;
-      startMiner(w).finally(() => { btnApply.disabled = false; });
-    });
-
-    // Enter در فیلد ولت
     walletInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") btnApply.click();
+      if (e.key === "Enter") startMiner();
     });
 
-    // دکمه‌ی توقف
     btnStop.addEventListener("click", () => {
       try {
         stop();
@@ -711,46 +536,27 @@
         setStatus("ماینر متوقف شد", "err");
         addLog("⏹ ماینر متوقف شد", "warn");
         btnStop.disabled = true;
+        btnStart.disabled = false;
       } catch (e) {
         addLog(`خطا در توقف: ${e?.message || e}`, "err");
       }
     });
 
     // ═══════════════════════════════════════════
-    // راه‌اندازی اولیه
-    // ═══════════════════════════════════════════
-    addLog("راه‌اندازی ماژول ماینر…", "info");
-    addLog(`CPU cores: ${navigator.hardwareConcurrency || "?"}`, "info");
-
-    // مقدار پیش‌فرض ولت
-    walletInput.value = DEFAULT_WALLET;
-    updateZpoolLink(DEFAULT_WALLET);
-
-    // شروع خودکار با ولت پیش‌فرض
-    startMiner(DEFAULT_WALLET);
-
-    // ═══════════════════════════════════════════
     // گزارش دوره‌ای آمار
     // ═══════════════════════════════════════════
     setInterval(() => {
       if (!minerRunning || !minotaurxHashrate) return;
-
       const acc = minotaurxHashrate.sharesAccepted ?? 0;
       const rej = minotaurxHashrate.sharesRejected ?? 0;
-
       $("accepted").textContent = acc;
       $("rejected").textContent = rej;
-
-      const uptime = minotaurxHashrate.getUptime
-        ? minotaurxHashrate.getUptime()
-        : "?";
-
-      addLog(
-        `[Stats] ${fmtHash(minotaurxHashrate.currentHashrateKHs)} | ` +
-        `A:${acc} | R:${rej} | Uptime: ${uptime}`,
-        "warn"
-      );
+      addLog(`[Stats] ${fmtHash(minotaurxHashrate.currentHashrateKHs)} | A:${acc} | R:${rej}`, "warn");
     }, 5000);
+
+    // ─── راه‌اندازی اولیه ───
+    addLog("صفحه آماده است. ولت را وارد کرده و الگوریتم را انتخاب کنید.", "info");
+    setStatus("در انتظار ورود ولت…");
   </script>
 </body>
 </html>
