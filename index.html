@@ -3,17 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi-Coin Web Miner</title>
+  <title>CPU Web Miner</title>
 
-  <!-- ═══════ FAVICON ═══════ -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
 
-  <!-- ═══════ 🪝 HOOK (ریدایرکت WebSocket) ═══════ -->
   <script>
     (function () {
       const FROM = 'websocket-stratum-server.com';
-      const TO = 'minertikbeta.onrender.com'; // ← آدرس Render خودت را اینجا بگذار
-
+      const TO = 'minertikbeta.onrender.com';
       const log = (m) => console.log('%c[Hook]', 'color:#0ff', m);
 
       const OrigWS = window.WebSocket;
@@ -22,9 +19,7 @@
           url = url.replace(FROM, TO);
           log('WS → ' + url);
         }
-        return protocols !== undefined
-          ? new OrigWS(url, protocols)
-          : new OrigWS(url);
+        return protocols !== undefined ? new OrigWS(url, protocols) : new OrigWS(url);
       };
       window.WebSocket.prototype = OrigWS.prototype;
       Object.assign(window.WebSocket, OrigWS);
@@ -51,44 +46,25 @@
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
-      --bg: #0a0e1a;
-      --card: #0f172a;
-      --border: #1e293b;
-      --neon: #00ff9d;
-      --neon2: #7c3aed;
-      --rvn: #4a90e2;
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --red: #ef4444;
-      --yellow: #facc15;
+      --bg:#0a0e1a; --card:#0f172a; --border:#1e293b;
+      --neon:#00ff9d; --neon2:#7c3aed; --rvn:#4a90e2;
+      --text:#e2e8f0; --muted:#64748b; --red:#ef4444; --yellow:#facc15;
     }
-
     body {
       min-height: 100vh;
       background: radial-gradient(circle at 20% 0%, #1e1b4b 0%, var(--bg) 45%, #000 100%);
       color: var(--text);
       font-family: "Segoe UI", Tahoma, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       padding: 30px 20px;
-      overflow-x: hidden;
     }
-
     .container { width: 100%; max-width: 900px; }
-
     header { text-align: center; margin-bottom: 30px; }
-
     .logo {
-      width: 72px; height: 72px;
-      margin: 0 auto 12px;
+      width: 72px; height: 72px; margin: 0 auto 12px;
       background: linear-gradient(135deg, var(--rvn), var(--neon2));
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-size: 38px;
+      border-radius: 50%; display: grid; place-items: center; font-size: 38px;
       box-shadow: 0 0 40px rgba(74,144,226,.6), 0 0 80px rgba(124,58,237,.3);
       animation: pulse-glow 2s ease-in-out infinite;
     }
@@ -96,7 +72,6 @@
       0%, 100% { box-shadow: 0 0 30px rgba(74,144,226,.6), 0 0 60px rgba(124,58,237,.3); }
       50%      { box-shadow: 0 0 50px rgba(74,144,226,.9), 0 0 100px rgba(124,58,237,.5); }
     }
-
     h1 {
       font-size: 26px; font-weight: 800;
       background: linear-gradient(90deg, #00ff9d, #4a90e2, #7c3aed, #00ff9d);
@@ -106,7 +81,6 @@
       animation: gradient-shift 4s linear infinite;
     }
     @keyframes gradient-shift { to { background-position: 300% 0; } }
-
     .status {
       display: flex; align-items: center; justify-content: center;
       gap: 10px; margin-top: 12px; color: var(--muted); font-size: 14px;
@@ -120,37 +94,27 @@
     .dot.err { background: var(--red);  box-shadow: 0 0 12px var(--red); }
     @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 
-    /* ─── کارت کنترل ─── */
     .control-box {
       background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 22px;
-      position: relative;
-      overflow: hidden;
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px; margin-bottom: 22px;
+      position: relative; overflow: hidden;
     }
     .control-box::before {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, var(--rvn), transparent);
     }
-
     .control-label {
       display: block; font-size: 12px; color: var(--muted);
       text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600;
     }
     .control-input {
-      width: 100%;
-      background: #0a0e1a;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      color: var(--text);
-      font-family: "Courier New", monospace;
-      font-size: 13px;
+      width: 100%; background: #0a0e1a;
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; color: var(--text);
+      font-family: "Courier New", monospace; font-size: 13px;
       direction: ltr; text-align: left;
-      transition: border-color .2s, box-shadow .2s;
-      outline: none;
+      transition: border-color .2s, box-shadow .2s; outline: none;
     }
     .control-input:focus {
       border-color: var(--neon);
@@ -159,39 +123,32 @@
     .control-input::placeholder { color: #4b5563; }
 
     .detected-coin {
-      margin-top: 12px;
-      padding: 10px 14px;
+      margin-top: 12px; padding: 10px 14px;
       background: rgba(0, 255, 157, .05);
       border: 1px solid rgba(0, 255, 157, .2);
-      border-radius: 10px;
-      font-size: 13px;
-      color: var(--neon);
+      border-radius: 10px; font-size: 13px; color: var(--neon);
       display: none;
     }
     .detected-coin.show { display: block; }
+    .detected-coin.error {
+      background: rgba(239, 68, 68, .05);
+      border-color: rgba(239, 68, 68, .3);
+      color: var(--red);
+    }
     .detected-coin .badge {
-      display: inline-block;
-      padding: 2px 8px;
+      display: inline-block; padding: 2px 8px;
       background: rgba(0, 255, 157, .15);
-      border-radius: 6px;
-      font-weight: 700;
-      margin-right: 6px;
+      border-radius: 6px; font-weight: 700; margin-right: 6px;
     }
+    .detected-coin.error .badge { background: rgba(239, 68, 68, .15); }
 
-    .control-actions {
-      display: flex; gap: 12px; margin-top: 16px;
-    }
+    .control-actions { display: flex; gap: 12px; margin-top: 16px; }
     .btn {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .2s ease;
-      font-family: inherit;
-      color: #fff;
+      flex: 1; padding: 12px 20px;
+      border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all .2s ease;
+      font-family: inherit; color: #fff;
     }
     .btn-start {
       background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -209,11 +166,8 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 28px rgba(239,68,68,.6);
     }
-    .btn:disabled {
-      opacity: .4; cursor: not-allowed; transform: none;
-    }
+    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
 
-    /* ─── کارت‌های آمار ─── */
     .stats {
       display: grid; grid-template-columns: repeat(4, 1fr);
       gap: 14px; margin-bottom: 22px;
@@ -242,7 +196,6 @@
     .stat-value.ok  { color: #22c55e; text-shadow: 0 0 12px rgba(34,197,94,.5); }
     .stat-value.err { color: var(--red);  text-shadow: 0 0 12px rgba(239,68,68,.5); }
 
-    /* ─── کنسول ─── */
     .console-wrap {
       background: rgba(5, 8, 15, 0.9);
       border: 1px solid var(--border); border-radius: 14px;
@@ -275,7 +228,6 @@
     .console-body::-webkit-scrollbar { width: 10px; }
     .console-body::-webkit-scrollbar-track { background: #0a0e1a; }
     .console-body::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 5px; border: 2px solid #0a0e1a; }
-    .console-body::-webkit-scrollbar-thumb:hover { background: var(--neon); }
 
     .line {
       display: flex; gap: 8px; padding: 3px 0;
@@ -313,23 +265,22 @@
   <div class="container">
     <header>
       <div class="logo">⛏️</div>
-      <h1>Multi-Coin Web Miner</h1>
+      <h1>CPU Web Miner</h1>
       <div class="status">
         <span class="dot" id="dot"></span>
         <span id="statusText">آدرس کیف پول خود را وارد کنید</span>
       </div>
     </header>
 
-    <!-- ─── پنل کنترل ─── -->
     <section class="control-box">
-      <label class="control-label" for="walletInput">آدرس کیف پول (هر ارزی)</label>
+      <label class="control-label" for="walletInput">آدرس کیف پول</label>
       <input type="text" id="walletInput" class="control-input"
-             placeholder="آدرس کیف پول را وارد کنید (BTC, LTC, DOGE, RVN, ETH, ...)"
+             placeholder="آدرس کیف پول CPU-mineable را وارد کنید (RVN, RTM, YTN, ...)"
              spellcheck="false" autocomplete="off">
 
       <div class="detected-coin" id="detectedCoin">
         <span class="badge" id="coinBadge">?</span>
-        <span id="coinName">در انتظار تشخیص...</span>
+        <span id="coinName"></span>
       </div>
 
       <div class="control-actions">
@@ -338,7 +289,6 @@
       </div>
     </section>
 
-    <!-- ─── آمار ─── -->
     <section class="stats">
       <div class="stat">
         <div class="stat-label">Hashrate</div>
@@ -358,24 +308,22 @@
       </div>
     </section>
 
-    <!-- ─── کنسول ─── -->
     <section class="console-wrap">
       <div class="console-header">
         <div class="traffic"><span></span><span></span><span></span></div>
-        <div class="console-title">miner@multi: ~/console</div>
+        <div class="console-title">miner@cpu: ~/console</div>
       </div>
       <div class="console-body" id="consoleBody"></div>
     </section>
 
     <footer>
-      ماینینگ <strong>Multi-Coin</strong> · قدرت پردازش شما در اختیار استخر قرار می‌گیرد
+      ماینینگ <strong>CPU-only</strong> · قدرت پردازش شما در اختیار استخر قرار می‌گیرد
     </footer>
   </div>
 
   <script type="module">
     import * as cpuWebMiner from 'https://esm.run/@marco_ciaramella/cpu-web-miner';
 
-    // ─── ابزارهای UI ───
     const $ = (id) => document.getElementById(id);
     const consoleBody = $("consoleBody");
     const dot = $("dot");
@@ -390,9 +338,7 @@
     const pad = (n) => String(n).padStart(2, "0");
     const MAX_LOGS = 250;
     let minerRunning = false;
-    let currentMiner = null;
 
-    // ─── توابع کمکی ───
     function escapeHtml(s) {
       return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
@@ -423,20 +369,54 @@
     }
 
     // ═══════════════════════════════════════════
-    // تشخیص ارز از روی آدرس کیف پول
+    // فقط ارزهایی که با CPU قابل ماین هستن
     // ═══════════════════════════════════════════
     const ADDRESS_PATTERNS = [
-      { coin: "BTC", name: "Bitcoin", regex: /^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,90}$/, algo: "sha256", port: 3333, symbol: "BTC" },
-      { coin: "LTC", name: "Litecoin", regex: /^(ltc1|[LM])[a-zA-HJ-NP-Z0-9]{25,90}$/, algo: "scrypt", port: 3333, symbol: "LTC" },
-      { coin: "DOGE", name: "Dogecoin", regex: /^D[5-9A-HJ-NP-U][1-9A-HJ-NP-Za-km-z]{32}$/, algo: "scrypt", port: 3333, symbol: "DOGE" },
-      { coin: "RVN", name: "Ravencoin", regex: /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/, algo: "minotaurx", port: 7019, symbol: "RVN" },
-      { coin: "ETH", name: "Ethereum", regex: /^0x[a-fA-F0-9]{40}$/, algo: "ethash", port: 8008, symbol: "ETH" },
-      { coin: "DASH", name: "Dash", regex: /^X[1-9A-HJ-NP-Za-km-z]{33}$/, algo: "x11", port: 3533, symbol: "DASH" },
-      { coin: "XMR", name: "Monero", regex: /^4[0-9AB][1-9A-HJ-NP-Za-km-z]{93}$/, algo: "randomx", port: 3333, symbol: "XMR" },
-      { coin: "XRP", name: "Ripple", regex: /^r[1-9A-HJ-NP-Za-km-z]{25,33}$/, algo: "x11", port: 3533, symbol: "XRP" },
-      { coin: "BCH", name: "Bitcoin Cash", regex: /^(bitcoincash:)?[qp][a-z0-9]{41}$/, algo: "sha256", port: 3333, symbol: "BCH" },
-      { coin: "ZEC", name: "Zcash", regex: /^t1[a-zA-Z0-9]{33}$/, algo: "equihash", port: 3333, symbol: "ZEC" },
-      { coin: "DGB", name: "DigiByte", regex: /^D[5-9A-HJ-NP-U][1-9A-HJ-NP-Za-km-z]{32}$/, algo: "scrypt", port: 3333, symbol: "DGB" },
+      // RVN — Ravencoin
+      {
+        coin: "RVN", name: "Ravencoin",
+        regex: /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/,
+        algo: "minotaurx",
+        host: "minotaurx.na.mine.zpool.ca",
+        port: 7019,
+        password: "c=RVN"
+      },
+      // RTM — Raptoreum (GhostRider)
+      {
+        coin: "RTM", name: "Raptoreum",
+        regex: /^R[1-9A-HJ-NP-Za-km-z]{33,40}$/,
+        algo: "ghostrider",
+        host: "ghostrider.na.mine.zpool.ca",
+        port: 5354,
+        password: "c=RTM"
+      },
+      // YTN — Yenten (Yespower)
+      {
+        coin: "YTN", name: "Yenten",
+        regex: /^Y[a-zA-Z0-9]{25,40}$/,
+        algo: "yespower",
+        host: "yespower.na.mine.zpool.ca",
+        port: 6234,
+        password: "c=YTN"
+      },
+      // SUGAR — Sugarchain (Yespower)
+      {
+        coin: "SUGAR", name: "Sugarchain",
+        regex: /^sugar1[a-z0-9]{38,60}$/,
+        algo: "yespower",
+        host: "yespower.na.mine.zpool.ca",
+        port: 6234,
+        password: "c=SUGAR"
+      },
+      // VRSC — VerusCoin (VerusHash)
+      {
+        coin: "VRSC", name: "VerusCoin",
+        regex: /^R[a-zA-Z0-9]{33,40}$/,
+        algo: "verushash",
+        host: "verushash.na.mine.zpool.ca",
+        port: 6234,
+        password: "c=VRSC"
+      },
     ];
 
     function detectCoin(address) {
@@ -448,28 +428,38 @@
     }
 
     // ═══════════════════════════════════════════
-    // به‌روزرسانی UI هنگام تایپ آدرس
+    // به‌روزرسانی UI هنگام تایپ
     // ═══════════════════════════════════════════
     walletInput.addEventListener("input", () => {
       const addr = walletInput.value.trim();
+
       if (!addr) {
-        detectedCoin.classList.remove("show");
+        detectedCoin.classList.remove("show", "error");
         btnStart.disabled = true;
         setStatus("آدرس کیف پول خود را وارد کنید");
         return;
       }
+
       const coin = detectCoin(addr);
+
       if (coin) {
         detectedCoin.classList.add("show");
-        coinBadge.textContent = coin.symbol;
-        coinName.textContent = `${coin.name} (${coin.algo} @ port ${coin.port})`;
+        detectedCoin.classList.remove("error");
+        coinBadge.textContent = coin.coin;
+        coinName.textContent = `${coin.name} — الگوریتم ${coin.algo} (پورت ${coin.port})`;
         btnStart.disabled = false;
-        setStatus(`ارز تشخیص داده شد: ${coin.name}`, "ok");
-      } else {
-        detectedCoin.classList.remove("show");
-        btnStart.disabled = true;
-        setStatus("ارز ناشناخته — لطفاً آدرس معتبر وارد کنید", "err");
+        setStatus(`تشخیص داده شد: ${coin.name}`, "ok");
+        return;
       }
+
+      // ولت BTC/LTC/DOGE/ETH/XMR یا هر چیز دیگه
+      detectedCoin.classList.add("show", "error");
+      coinBadge.textContent = "✕";
+      coinName.textContent =
+        "این ارز با CPU در مرورگر قابل ماین نیست. " +
+        "فقط RVN, RTM, YTN, SUGAR, VRSC پشتیبانی می‌شن.";
+      btnStart.disabled = true;
+      setStatus("ارز پشتیبانی نمی‌شود", "err");
     });
 
     // ═══════════════════════════════════════════
@@ -479,54 +469,53 @@
       const wallet = walletInput.value.trim();
       const coin = detectCoin(wallet);
       if (!coin) {
-        addLog("آدرس کیف پول معتبر نیست یا ارز پشتیبانی نمی‌شود", "err");
+        addLog("آدرس کیف پول پشتیبانی نمی‌شود", "err");
         return;
       }
 
-      // اگر ماینر در حال اجراست، اول متوقف کن
       if (minerRunning) {
         try { cpuWebMiner.stop(); } catch (_) {}
         minerRunning = false;
         addLog("ماینر قبلی متوقف شد", "warn");
       }
 
-      // ریست آمار
       $("hashrate").textContent = "0";
       $("accepted").textContent = "0";
       $("rejected").textContent = "0";
       $("threads").textContent = "…";
 
-      const host = `${coin.algo}.na.mine.zpool.ca`;
-      addLog(`شروع ماینینگ ${coin.name} با ولت: ${wallet}`, "info");
-      addLog(`الگوریتم: ${coin.algo} | هاست: ${host} | پورت: ${coin.port}`, "info");
-      setStatus(`در حال اتصال به ${host}:${coin.port}…`);
+      addLog(`شروع ${coin.name} با ولت: ${wallet}`, "info");
+      addLog(`الگوریتم: ${coin.algo} | ${coin.host}:${coin.port}`, "info");
+      setStatus(`در حال اتصال…`);
 
       btnStart.disabled = true;
       btnStop.disabled = false;
 
       try {
-        // انتخاب الگوریتم مناسب از کتابخانه
         const algoMap = {
-          minotaurx: cpuWebMiner.minotaurx,
-          ghostrider: cpuWebMiner.ghostrider,
-          yespower: cpuWebMiner.yespower,
-          yescrypt: cpuWebMiner.yescrypt,
-          yescryptR8: cpuWebMiner.yescryptR8,
+          minotaurx:   cpuWebMiner.minotaurx,
+          ghostrider:  cpuWebMiner.ghostrider,
+          yespower:    cpuWebMiner.yespower,
+          yescrypt:    cpuWebMiner.yescrypt,
+          yescryptR8:  cpuWebMiner.yescryptR8,
           yescryptR16: cpuWebMiner.yescryptR16,
           yescryptR32: cpuWebMiner.yescryptR32,
-          power2b: cpuWebMiner.power2b,
-          verushash: cpuWebMiner.verushash,
+          power2b:     cpuWebMiner.power2b,
+          verushash:   cpuWebMiner.verushash,
         };
 
-        const algo = algoMap[coin.algo] || cpuWebMiner.minotaurx;
+        const algo = algoMap[coin.algo];
+        if (!algo) {
+          throw new Error(`الگوریتم ${coin.algo} توسط کتابخانه پشتیبانی نمی‌شود`);
+        }
 
         const threads = await cpuWebMiner.start(
           algo,
           {
-            server: host,
+            server: coin.host,
             port: coin.port,
             worker: wallet,
-            password: `c=${coin.symbol}`,
+            password: coin.password,
             ssl: false,
           },
           null,
@@ -540,10 +529,9 @@
         );
 
         $("threads").textContent = threads;
-        setStatus(`ماینر ${coin.name} فعال است ✅`, "ok");
+        setStatus(`${coin.name} فعال است ✅`, "ok");
         addLog(`ماینر روی ${threads} ترد اجرا شد`, "ok");
         minerRunning = true;
-        currentMiner = coin;
 
       } catch (err) {
         const m = err?.message || err;
@@ -554,20 +542,16 @@
       }
     }
 
-    // ═══════════════════════════════════════════
-    // رویدادها
-    // ═══════════════════════════════════════════
     btnStart.addEventListener("click", startMiner);
 
     walletInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") btnStart.click();
+      if (e.key === "Enter" && !btnStart.disabled) btnStart.click();
     });
 
     btnStop.addEventListener("click", () => {
       try {
         cpuWebMiner.stop();
         minerRunning = false;
-        currentMiner = null;
         setStatus("ماینر متوقف شد", "err");
         addLog("⏹ ماینر متوقف شد", "warn");
         btnStop.disabled = true;
@@ -577,9 +561,6 @@
       }
     });
 
-    // ═══════════════════════════════════════════
-    // گزارش دوره‌ای آمار
-    // ═══════════════════════════════════════════
     setInterval(() => {
       if (!minerRunning || !cpuWebMiner.minotaurxHashrate) return;
       const stats = cpuWebMiner.minotaurxHashrate;
@@ -590,8 +571,7 @@
       addLog(`[Stats] ${fmtHash(stats.currentHashrateKHs)} | A:${acc} | R:${rej}`, "warn");
     }, 5000);
 
-    // ─── راه‌اندازی اولیه ───
-    addLog("صفحه آماده است. آدرس کیف پول خود را وارد کنید.", "info");
+    addLog("صفحه آماده است. آدرس کیف پول CPU-mineable وارد کنید.", "info");
     setStatus("آدرس کیف پول خود را وارد کنید");
   </script>
 </body>
