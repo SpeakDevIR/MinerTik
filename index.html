@@ -5,47 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RVN Web Miner</title>
 
-  <!-- ═══════ FAVICON ═══════ -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
+
+  <!-- ═══════ 🪝 Hook: ریدایرکت WebSocket به سرور خودت ═══════ -->
+  <script>
+    (function () {
+      const FROM = 'websocket-stratum-server.com';
+      const TO = 'YOUR-RENDER-APP.onrender.com'; // ← آدرس سرور Render خودت را اینجا بگذار
+
+      const log = (m) => console.log('%c[Hook]', 'color:#0ff', m);
+
+      const OrigWS = window.WebSocket;
+      window.WebSocket = function (url, protocols) {
+        if (typeof url === 'string' && url.includes(FROM)) {
+          url = url.replace(FROM, TO);
+          log('WS → ' + url);
+        }
+        return protocols !== undefined ? new OrigWS(url, protocols) : new OrigWS(url);
+      };
+      window.WebSocket.prototype = OrigWS.prototype;
+      Object.assign(window.WebSocket, OrigWS);
+
+      const origOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function (method, url) {
+        if (typeof url === 'string' && url.includes(FROM)) {
+          url = url.replace(FROM, TO);
+          log('XHR → ' + url);
+        }
+        return origOpen.apply(this, arguments);
+      };
+    })();
+  </script>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
-      --bg: #0a0e1a;
-      --border: #1e293b;
-      --neon: #00ff9d;
-      --neon2: #7c3aed;
-      --rvn: #4a90e2;
-      --text: #e2e8f0;
-      --muted: #64748b;
-      --red: #ef4444;
-      --yellow: #facc15;
+      --bg: #0a0e1a; --border: #1e293b; --neon: #00ff9d;
+      --neon2: #7c3aed; --rvn: #4a90e2; --text: #e2e8f0;
+      --muted: #64748b; --red: #ef4444; --yellow: #facc15;
     }
-
     body {
       min-height: 100vh;
       background: radial-gradient(circle at 20% 0%, #1e1b4b 0%, var(--bg) 45%, #000 100%);
       color: var(--text);
       font-family: "Segoe UI", Tahoma, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       padding: 30px 20px;
     }
-
     .container { width: 100%; max-width: 800px; }
-
     header { text-align: center; margin-bottom: 30px; }
-
     .logo {
-      width: 72px; height: 72px;
-      margin: 0 auto 12px;
+      width: 72px; height: 72px; margin: 0 auto 12px;
       background: linear-gradient(135deg, var(--rvn), var(--neon2));
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-size: 38px;
+      border-radius: 50%; display: grid; place-items: center; font-size: 38px;
       box-shadow: 0 0 40px rgba(74,144,226,.6), 0 0 80px rgba(124,58,237,.3);
       animation: pulse-glow 2s ease-in-out infinite;
     }
@@ -53,7 +65,6 @@
       0%, 100% { box-shadow: 0 0 30px rgba(74,144,226,.6), 0 0 60px rgba(124,58,237,.3); }
       50%      { box-shadow: 0 0 50px rgba(74,144,226,.9), 0 0 100px rgba(124,58,237,.5); }
     }
-
     h1 {
       font-size: 26px; font-weight: 800;
       background: linear-gradient(90deg, #00ff9d, #4a90e2, #7c3aed, #00ff9d);
@@ -63,7 +74,6 @@
       animation: gradient-shift 4s linear infinite;
     }
     @keyframes gradient-shift { to { background-position: 300% 0; } }
-
     .status {
       display: flex; align-items: center; justify-content: center;
       gap: 10px; margin-top: 12px; color: var(--muted); font-size: 14px;
@@ -79,75 +89,76 @@
 
     .control-box {
       background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 22px;
-      position: relative;
-      overflow: hidden;
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 20px; margin-bottom: 22px;
+      position: relative; overflow: hidden;
     }
     .control-box::before {
       content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, transparent, var(--rvn), transparent);
     }
-
     .control-label {
       display: block; font-size: 12px; color: var(--muted);
       text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600;
     }
     .control-input {
-      width: 100%;
-      background: #0a0e1a;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      color: var(--text);
-      font-family: "Courier New", monospace;
-      font-size: 13px;
+      width: 100%; background: #0a0e1a;
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; color: var(--text);
+      font-family: "Courier New", monospace; font-size: 13px;
       direction: ltr; text-align: left;
-      transition: border-color .2s, box-shadow .2s;
-      outline: none;
+      transition: border-color .2s, box-shadow .2s; outline: none;
     }
     .control-input:focus {
       border-color: var(--neon);
       box-shadow: 0 0 0 3px rgba(0, 255, 157, .1);
     }
-
     .control-actions { display: flex; gap: 12px; margin-top: 16px; }
     .btn {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .2s ease;
-      font-family: inherit;
-      color: #fff;
+      flex: 1; padding: 12px 20px; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      transition: all .2s ease; font-family: inherit; color: #fff;
     }
     .btn-start {
       background: linear-gradient(135deg, #22c55e, #16a34a);
       box-shadow: 0 4px 20px rgba(34,197,94,.4);
     }
-    .btn-start:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 28px rgba(34,197,94,.6);
-    }
+    .btn-start:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(34,197,94,.6); }
     .btn-stop {
       background: linear-gradient(135deg, #ef4444, #b91c1c);
       box-shadow: 0 4px 20px rgba(239,68,68,.4);
     }
-    .btn-stop:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 28px rgba(239,68,68,.6);
-    }
+    .btn-stop:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(239,68,68,.6); }
     .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+    .stats {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 14px; margin-bottom: 22px;
+    }
+    .stat {
+      background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
+      border: 1px solid var(--border); border-radius: 14px;
+      padding: 18px 12px; text-align: center; position: relative;
+      overflow: hidden; transition: transform .25s, border-color .25s;
+    }
+    .stat:hover { transform: translateY(-4px); border-color: var(--neon); }
+    .stat::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon), transparent);
+      opacity: .8;
+    }
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .stat-value {
+      font-size: 22px; font-weight: 700; color: var(--neon);
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 12px rgba(0,255,157,.5);
+    }
+    .stat-value.ok  { color: #22c55e; text-shadow: 0 0 12px rgba(34,197,94,.5); }
+    .stat-value.err { color: var(--red);  text-shadow: 0 0 12px rgba(239,68,68,.5); }
 
     .console-wrap {
       background: rgba(5, 8, 15, 0.9);
-      border: 1px solid var(--border);
-      border-radius: 14px;
+      border: 1px solid var(--border); border-radius: 14px;
       overflow: hidden;
       box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
     }
@@ -194,16 +205,15 @@
     .line.warn .msg { color: var(--yellow); }
     .line.err  .msg { color: var(--red); }
 
-    footer {
-      margin-top: 24px; text-align: center;
-      font-size: 12px; color: var(--muted);
-    }
+    footer { margin-top: 24px; text-align: center; font-size: 12px; color: var(--muted); }
     footer strong { color: var(--rvn); }
 
     @media (max-width: 640px) {
       h1 { font-size: 20px; }
       .logo { width: 56px; height: 56px; font-size: 28px; }
       .control-actions { flex-direction: column; }
+      .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-value { font-size: 18px; }
       .console-body { height: 240px; font-size: 11.5px; }
     }
   </style>
@@ -232,6 +242,25 @@
       </div>
     </section>
 
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-label">Hashrate</div>
+        <div class="stat-value" id="hashrate">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Accepted</div>
+        <div class="stat-value ok" id="accepted">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value err" id="rejected">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Threads</div>
+        <div class="stat-value" id="threads">–</div>
+      </div>
+    </section>
+
     <section class="console-wrap">
       <div class="console-header">
         <div class="traffic"><span></span><span></span><span></span></div>
@@ -245,10 +274,10 @@
     </footer>
   </div>
 
-  <!-- کتابخانه‌ی ماینر -->
   <script type="module">
-    import * as minotaurx from "https://esm.run/@marco_ciaramella/minotaurx-web";
+    import * as cpuWebMiner from 'https://esm.run/@marco_ciaramella/cpu-web-miner';
 
+    // ─── عناصر UI ───
     const $ = (id) => document.getElementById(id);
     const consoleBody = $("consoleBody");
     const dot = $("dot");
@@ -261,6 +290,7 @@
     const MAX_LOGS = 250;
     let minerRunning = false;
 
+    // ─── توابع کمکی ───
     function escapeHtml(s) {
       return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
@@ -283,17 +313,25 @@
       dot.className = "dot" + (kind === "ok" ? " ok" : kind === "err" ? " err" : "");
     }
 
+    function fmtHash(khs) {
+      const n = Number(khs) || 0;
+      if (n >= 1000) return (n / 1000).toFixed(2) + " MH/s";
+      if (n >= 1)    return n.toFixed(2) + " KH/s";
+      return (n * 1000).toFixed(0) + " H/s";
+    }
+
     function isValidWallet(w) {
       return /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/.test(w.trim());
     }
 
-    // ─── شروع ماینینگ ───
-    btnStart.addEventListener("click", () => {
+    // ─── شروع ماینر ───
+    async function startMiner() {
       const wallet = walletInput.value.trim();
 
       if (!isValidWallet(wallet)) {
         addLog("آدرس کیف پول معتبر نیست (باید با R شروع شود)", "err");
         setStatus("ولت نامعتبر", "err");
+        walletInput.focus();
         return;
       }
 
@@ -305,44 +343,78 @@
       addLog(`شروع ماینینگ با ولت: ${wallet}`, "info");
       setStatus("در حال اتصال…");
 
+      btnStart.disabled = true;
+      btnStop.disabled = false;
+
       try {
-        minotaurx.mine({
-          stratum: {
+        const threads = await cpuWebMiner.start(
+          cpuWebMiner.minotaurx,
+          {
             server: "minotaurx.na.mine.zpool.ca",
             port: 7019,
             worker: wallet,
             password: "c=RVN",
+            ssl: false,
           },
-          options: {
-            log: true,
+          (msg) => {
+            const text = typeof msg === "string" ? msg : JSON.stringify(msg);
+            addLog(text, "info");
           },
-        });
+          cpuWebMiner.ALL_THREADS,
+          (work) => addLog(`New job: ${work?.job_id ?? "?"}`, "info"),
+          (hashrate) => { $("hashrate").textContent = fmtHash(hashrate); },
+          (error) => {
+            addLog(`خطا: ${error?.message || error}`, "err");
+            setStatus("خطا در ماینر", "err");
+          }
+        );
 
-        minerRunning = true;
-        btnStart.disabled = true;
-        btnStop.disabled = false;
+        $("threads").textContent = threads;
         setStatus("ماینر فعال است ✅", "ok");
-        addLog("ماینر با موفقیت شروع شد", "ok");
-        addLog("در حال دریافت کار از استخر…", "info");
-      } catch (err) {
-        addLog(`خطا در شروع: ${err.message || err}`, "err");
-        setStatus("خطا در ماینر", "err");
-      }
-    });
+        addLog(`ماینر روی ${threads} ترد اجرا شد`, "ok");
+        minerRunning = true;
 
-    // ─── توقف ماینینگ ───
-    btnStop.addEventListener("click", () => {
+      } catch (err) {
+        const m = err?.message || err;
+        addLog(`اجرای ماینر ناموفق: ${m}`, "err");
+        setStatus("اجرای ماینر ناموفق", "err");
+        btnStart.disabled = false;
+        btnStop.disabled = true;
+      }
+    }
+
+    // ─── توقف ماینر ───
+    function stopMiner() {
       try {
-        minotaurx.stop();
+        cpuWebMiner.stop();
         minerRunning = false;
         btnStart.disabled = false;
         btnStop.disabled = true;
         setStatus("ماینر متوقف شد", "err");
         addLog("⏹ ماینر متوقف شد", "warn");
       } catch (e) {
-        addLog(`خطا در توقف: ${e.message || e}`, "err");
+        addLog(`خطا در توقف: ${e?.message || e}`, "err");
       }
+    }
+
+    // ─── رویدادها ───
+    btnStart.addEventListener("click", startMiner);
+    btnStop.addEventListener("click", stopMiner);
+
+    walletInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !btnStart.disabled) btnStart.click();
     });
+
+    // ─── گزارش دوره‌ای آمار ───
+    setInterval(() => {
+      if (!minerRunning || !cpuWebMiner.minotaurxHashrate) return;
+      const stats = cpuWebMiner.minotaurxHashrate;
+      const acc = stats.sharesAccepted ?? 0;
+      const rej = stats.sharesRejected ?? 0;
+      $("accepted").textContent = acc;
+      $("rejected").textContent = rej;
+      addLog(`[Stats] ${fmtHash(stats.currentHashrateKHs)} | A:${acc} | R:${rej}`, "warn");
+    }, 5000);
 
     // ─── پیام خوش‌آمد ───
     addLog("صفحه آماده است. آدرس کیف پول RVN را وارد کنید.", "info");
