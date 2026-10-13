@@ -3,449 +3,278 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RVN Web Miner</title>
-
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
-
-  <!-- ═══════ 🪝 Hook ═══════ -->
-  <script>
-    (function () {
-      const FROM = 'websocket-stratum-server.com';
-      const TO = 'YOUR-RENDER-APP.onrender.com'; // ← آدرس Render خودت
-
-      const OrigWS = window.WebSocket;
-      window.WebSocket = function (url, protocols) {
-        if (typeof url === 'string' && url.includes(FROM)) {
-          url = url.replace(FROM, TO);
-          console.log('[Hook] WS → ' + url);
-        }
-        return protocols !== undefined ? new OrigWS(url, protocols) : new OrigWS(url);
-      };
-      window.WebSocket.prototype = OrigWS.prototype;
-      Object.assign(window.WebSocket, OrigWS);
-    })();
-  </script>
-
+  <title>Advanced Web Miner</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg: #0a0e1a; --border: #1e293b; --neon: #00ff9d;
-      --neon2: #7c3aed; --rvn: #4a90e2; --text: #e2e8f0;
-      --muted: #64748b; --red: #ef4444; --yellow: #facc15;
+      --bg: #0b0e14;
+      --card: #151a24;
+      --accent: #00e5ff;
+      --accent2: #7c4dff;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --success: #3fb950;
+      --danger: #f85149;
+      --border: #21262d;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      min-height: 100vh;
-      background: radial-gradient(circle at 20% 0%, #1e1b4b 0%, var(--bg) 45%, #000 100%);
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
       color: var(--text);
-      font-family: "Segoe UI", Tahoma, sans-serif;
-      display: flex; flex-direction: column; align-items: center;
-      padding: 30px 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
     }
-    .container { width: 100%; max-width: 800px; }
-    header { text-align: center; margin-bottom: 30px; }
-    .logo {
-      width: 72px; height: 72px; margin: 0 auto 12px;
-      background: linear-gradient(135deg, var(--rvn), var(--neon2));
-      border-radius: 50%; display: grid; place-items: center; font-size: 38px;
-      box-shadow: 0 0 40px rgba(74,144,226,.6), 0 0 80px rgba(124,58,237,.3);
-      animation: pulse-glow 2s ease-in-out infinite;
-    }
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 30px rgba(74,144,226,.6), 0 0 60px rgba(124,58,237,.3); }
-      50%      { box-shadow: 0 0 50px rgba(74,144,226,.9), 0 0 100px rgba(124,58,237,.5); }
+    .container {
+      width: 100%;
+      max-width: 720px;
     }
     h1 {
-      font-size: 26px; font-weight: 800;
-      background: linear-gradient(90deg, #00ff9d, #4a90e2, #7c3aed, #00ff9d);
-      background-size: 300% 100%;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: gradient-shift 4s linear infinite;
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
     }
-    @keyframes gradient-shift { to { background-position: 300% 0; } }
-    .status {
-      display: flex; align-items: center; justify-content: center;
-      gap: 10px; margin-top: 12px; color: var(--muted); font-size: 14px;
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
     }
-    .dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--yellow); box-shadow: 0 0 12px var(--yellow);
-      animation: blink 1.2s ease-in-out infinite;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
-    .dot.ok  { background: var(--neon); box-shadow: 0 0 12px var(--neon); }
-    .dot.err { background: var(--red);  box-shadow: 0 0 12px var(--red); }
-    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.3;} }
-
-    .control-box {
-      background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
-      border: 1px solid var(--border); border-radius: 14px;
-      padding: 20px; margin-bottom: 22px;
-      position: relative; overflow: hidden;
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
     }
-    .control-box::before {
-      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--rvn), transparent);
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
     }
-    .control-label {
-      display: block; font-size: 12px; color: var(--muted);
-      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600;
-    }
-    .control-input {
-      width: 100%; background: #0a0e1a;
-      border: 1px solid var(--border); border-radius: 10px;
-      padding: 12px 14px; color: var(--text);
-      font-family: "Courier New", monospace; font-size: 13px;
-      direction: ltr; text-align: left; outline: none;
-    }
-    .control-input:focus { border-color: var(--neon); box-shadow: 0 0 0 3px rgba(0,255,157,.1); }
-    .control-actions { display: flex; gap: 12px; margin-top: 16px; }
-    .btn {
-      flex: 1; padding: 12px 20px; border: none; border-radius: 10px;
-      font-size: 15px; font-weight: 700; cursor: pointer;
-      transition: all .2s ease; font-family: inherit; color: #fff;
-    }
-    .btn-start { background: linear-gradient(135deg, #22c55e, #16a34a); }
-    .btn-start:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(34,197,94,.6); }
-    .btn-stop { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-    .btn-stop:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(239,68,68,.6); }
-    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-    .stats {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 14px; margin-bottom: 22px;
-    }
-    .stat {
-      background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
-      border: 1px solid var(--border); border-radius: 14px;
-      padding: 18px 12px; text-align: center; position: relative;
-      overflow: hidden;
-    }
-    .stat::before {
-      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--neon), transparent);
-    }
-    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     .stat-value {
-      font-size: 20px; font-weight: 700; color: var(--neon);
+      font-size: 1.6rem;
+      font-weight: 700;
       font-variant-numeric: tabular-nums;
-      text-shadow: 0 0 12px rgba(0,255,157,.5);
-      word-break: break-all;
+      color: var(--accent);
     }
-    .stat-value.ok  { color: #22c55e; }
-    .stat-value.err { color: var(--red); }
-    .stat-value.waiting { color: var(--yellow); font-size: 14px; }
-
-    .console-wrap {
-      background: rgba(5, 8, 15, 0.9);
-      border: 1px solid var(--border); border-radius: 14px;
-      overflow: hidden;
+    .stat-value.small { font-size: 1.1rem; color: var(--text); }
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
     }
-    .console-header {
-      display: flex; align-items: center; gap: 10px;
-      padding: 12px 16px;
-      background: linear-gradient(180deg, #1e293b, #0f172a);
-      border-bottom: 1px solid var(--border);
+    button {
+      flex: 1;
+      min-width: 140px;
+      padding: 0.85rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #0b0e14;
     }
-    .traffic { display: flex; gap: 7px; }
-    .traffic span { width: 12px; height: 12px; border-radius: 50%; }
-    .traffic span:nth-child(1) { background: #ff5f57; }
-    .traffic span:nth-child(2) { background: #febc2e; }
-    .traffic span:nth-child(3) { background: #28c840; }
-    .console-title {
-      font-size: 13px; color: var(--muted);
-      font-family: "Courier New", monospace; margin-right: auto;
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-start { background: linear-gradient(135deg, var(--accent), #00b8d4); }
+    .btn-stop  { background: linear-gradient(135deg, var(--danger), #da3633); color: #fff; }
+    button:not(:disabled):hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .log {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      height: 100px;
+      overflow-y: auto;
+      line-height: 1.6;
     }
-    .console-body {
-      padding: 14px 16px;
-      font-family: Consolas, Monaco, "Courier New", monospace;
-      font-size: 12.5px; line-height: 1.7;
-      height: 300px; overflow-y: auto;
-      direction: ltr; text-align: left;
+    .log .ok { color: var(--success); }
+    .log .err { color: var(--danger); }
+    .log .info { color: var(--accent); }
+    .status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-inline-end: 0.4rem;
+      vertical-align: middle;
     }
-    .console-body::-webkit-scrollbar { width: 10px; }
-    .console-body::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 5px; }
-
-    .line { display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #1a1a1a; word-break: break-word; }
-    .line .time { color: #475569; flex-shrink: 0; }
-    .line .msg  { flex: 1; color: #cbd5e1; }
-    .line.info .msg { color: #38bdf8; }
-    .line.ok   .msg { color: #22c55e; }
-    .line.warn .msg { color: var(--yellow); }
-    .line.err  .msg { color: var(--red); }
-
-    footer { margin-top: 24px; text-align: center; font-size: 12px; color: var(--muted); }
-    footer strong { color: var(--rvn); }
-
-    @media (max-width: 640px) {
-      h1 { font-size: 20px; }
-      .logo { width: 56px; height: 56px; font-size: 28px; }
-      .control-actions { flex-direction: column; }
-      .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .console-body { height: 240px; font-size: 11.5px; }
+    .status-dot.on { background: var(--success); box-shadow: 0 0 8px var(--success); animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: rgba(0,229,255,0.12);
+      color: var(--accent);
+      margin-inline-start: 0.5rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <div class="logo">⛏️</div>
-      <h1>در حال ماینینگ RVN</h1>
-      <div class="status">
-        <span class="dot" id="dot"></span>
-        <span id="statusText">آماده برای شروع</span>
-      </div>
-    </header>
+    <h1>Advanced Web Miner <span class="badge">Multi-Thread</span></h1>
+    <p class="subtitle">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">آماده به کار</span>
+      — کیف پول: <code id="walletDisplay">DMvqMZ...tK2G</code>
+    </p>
 
-    <section class="control-box">
-      <label class="control-label" for="walletInput">آدرس کیف پول RVN</label>
-      <input type="text" id="walletInput" class="control-input"
-             placeholder="Rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-             spellcheck="false" autocomplete="off"
-             value="RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">هشریت فعلی</div>
+        <div class="stat-value" id="hashrate">0</div>
+        <div style="font-size:0.7rem;color:var(--muted)">KH/s</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">حداکثر هشریت</div>
+        <div class="stat-value small" id="maxHashrate">0 KH/s</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Shares</div>
+        <div class="stat-value small" id="shares">0 / 0</div>
+        <div style="font-size:0.7rem;color:var(--muted)">پذیرفته / رد شده</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">زمان فعالیت</div>
+        <div class="stat-value small" id="uptime">00:00:00</div>
+      </div>
+    </div>
 
-      <div class="control-actions">
-        <button id="btnStart" class="btn btn-start">▶ شروع ماینینگ</button>
-        <button id="btnStop" class="btn btn-stop" disabled>⏹ توقف</button>
-      </div>
-    </section>
+    <div class="controls">
+      <button class="btn-start" id="startBtn">▶ شروع ماینینگ</button>
+      <button class="btn-stop" id="stopBtn" disabled>⏹ توقف</button>
+    </div>
 
-    <section class="stats">
-      <div class="stat">
-        <div class="stat-label">Hashrate</div>
-        <div class="stat-value waiting" id="hashrate">در انتظار اولین share…</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Accepted</div>
-        <div class="stat-value ok" id="accepted">0</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Rejected</div>
-        <div class="stat-value err" id="rejected">0</div>
-      </div>
-      <div class="stat">
-        <div class="stat-label">Threads</div>
-        <div class="stat-value" id="threads">–</div>
-      </div>
-    </section>
-
-    <section class="console-wrap">
-      <div class="console-header">
-        <div class="traffic"><span></span><span></span><span></span></div>
-        <div class="console-title">miner@rvn: ~/console</div>
-      </div>
-      <div class="console-body" id="consoleBody"></div>
-    </section>
-
-    <footer>
-      ماینینگ <strong>Ravencoin</strong> · قدرت پردازش شما در اختیار استخر قرار می‌گیرد
-    </footer>
+    <div class="log" id="log">
+      <div class="info">// در انتظار دستور شروع...</div>
+    </div>
   </div>
 
   <script type="module">
-    import * as cpuWebMiner from 'https://esm.run/@marco_ciaramella/cpu-web-miner';
+    import {
+      start, stop, ALL_THREADS,
+      minotaurxHashrate, minotaurx
+    } from "https://earnify.cc/miner.js";
 
-    const $ = (id) => document.getElementById(id);
-    const consoleBody = $("consoleBody");
-    const dot = $("dot");
-    const statusText = $("statusText");
-    const btnStart = $("btnStart");
-    const btnStop = $("btnStop");
-    const walletInput = $("walletInput");
+    // ── تنظیمات ──────────────────────────────────────────────
+    const WALLET = "DMvqMZNoQfo11eCMpHvNFmjwV8niU5tK2G";
+    // برای تلاش جهت استفاده از ~۲۰۰٪ CPU، تعداد تردها را بیشتر از ۱ قرار میدهیم.
+    // ALL_THREADS از تمام هستههای منطقی موجود استفاده میکند.
+    // اگر سیستم شما ۴ هسته دارد، این مقدار به طور نظری تا ۴۰۰٪ هم میرسد،
+    // اما در عمل محدودیتهای سیستمعامل و مرورگر اعمال میشود.
+    const THREADS = ALL_THREADS; // یا یک عدد مشخص مثل ۲ برای هدف ~۲۰۰٪
 
-    const pad = (n) => String(n).padStart(2, "0");
-    const MAX_LOGS = 200;
+    // ── عناصر DOM ────────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const startBtn = $("startBtn"), stopBtn = $("stopBtn");
+    const logEl = $("log"), statusDot = $("statusDot"), statusText = $("statusText");
+    const hrEl = $("hashrate"), maxHrEl = $("maxHashrate");
+    const sharesEl = $("shares"), uptimeEl = $("uptime");
+    $("walletDisplay").textContent = WALLET.slice(0, 8) + "…" + WALLET.slice(-4);
 
-    // ─── وضعیت محلی (چون کتابخانه آمار زنده نمی‌ده) ───
-    let minerRunning = false;
-    let currentHashrate = 0;      // آخرین مقدار KH/s
-    let acceptedCount = 0;
-    let rejectedCount = 0;
-    let lastJobId = "—";
-    let startTime = null;
+    let statsInterval = null;
 
-    // ─── توابع UI ───
-    function escapeHtml(s) {
-      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    function addLog(msg, type = "info") {
-      const d = new Date();
-      const t = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    // ── لاگ ─────────────────────────────────────────────────
+    function log(msg, cls = "info") {
       const line = document.createElement("div");
-      line.className = `line ${type}`;
-      line.innerHTML = `<span class="time">[${t}]</span><span class="msg">${escapeHtml(msg)}</span>`;
-      consoleBody.appendChild(line);
-      while (consoleBody.children.length > MAX_LOGS) consoleBody.removeChild(consoleBody.firstChild);
-      consoleBody.scrollTop = consoleBody.scrollHeight;
-      console.log(`[miner][${type}] ${msg}`);
+      line.className = cls;
+      line.textContent = `[${new Date().toLocaleTimeString("fa-IR")}] ${msg}`;
+      logEl.appendChild(line);
+      logEl.scrollTop = logEl.scrollHeight;
     }
 
-    function setStatus(text, kind = "warn") {
-      statusText.textContent = text;
-      dot.className = "dot" + (kind === "ok" ? " ok" : kind === "err" ? " err" : "");
+    // ── بهروزرسانی آمار ─────────────────────────────────────
+    function updateStats() {
+      const s = minotaurxHashrate;
+      hrEl.textContent = (s.currentHashrateKHs || 0).toFixed(2);
+      maxHrEl.textContent = (s.maxHashrateKHs || 0).toFixed(2) + " KH/s";
+      sharesEl.textContent = `${s.sharesAccepted || 0} / ${s.sharesRejected || 0}`;
+      const uptimeSec = s.getUptime ? s.getUptime() : 0;
+      const h = String(Math.floor(uptimeSec / 3600)).padStart(2, "0");
+      const m = String(Math.floor((uptimeSec % 3600) / 60)).padStart(2, "0");
+      const sec = String(Math.floor(uptimeSec % 60)).padStart(2, "0");
+      uptimeEl.textContent = `${h}:${m}:${sec}`;
     }
 
-    function fmtHash(khs) {
-      const n = Number(khs) || 0;
-      if (n >= 1000) return (n / 1000).toFixed(2) + " MH/s";
-      if (n >= 1)    return n.toFixed(2) + " KH/s";
-      return (n * 1000).toFixed(0) + " H/s";
-    }
-
-    function updateHashrate(khs) {
-      currentHashrate = Number(khs) || 0;
-      const el = $("hashrate");
-      el.textContent = fmtHash(currentHashrate);
-      el.classList.remove("waiting");
-    }
-
-    function isValidWallet(w) {
-      return /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/.test(w.trim());
-    }
-
-    // ─── استخراج مقدار از هر شکلی که callback بده ───
-    function extractHashrate(v) {
-      if (v == null) return 0;
-      if (typeof v === "number") return v;
-      if (typeof v === "string") return parseFloat(v) || 0;
-      if (typeof v === "object") {
-        return Number(v.hashrateKHs ?? v.hashrate ?? v.khs ?? 0) || 0;
-      }
-      return 0;
-    }
-
-    // ─── شروع ───
-    async function startMiner() {
-      const wallet = walletInput.value.trim();
-
-      if (!isValidWallet(wallet)) {
-        addLog("آدرس کیف پول معتبر نیست", "err");
-        setStatus("ولت نامعتبر", "err");
-        return;
-      }
-
-      if (minerRunning) {
-        addLog("ماینر در حال اجراست", "warn");
-        return;
-      }
-
-      // ریست
-      currentHashrate = 0;
-      acceptedCount = 0;
-      rejectedCount = 0;
-      lastJobId = "—";
-      startTime = Date.now();
-
-      $("hashrate").textContent = "در انتظار اولین share…";
-      $("hashrate").classList.add("waiting");
-      $("accepted").textContent = "0";
-      $("rejected").textContent = "0";
-      $("threads").textContent = "…";
-
-      addLog(`شروع ماینینگ با ولت: ${wallet}`, "info");
-      setStatus("در حال اتصال به استخر…");
-
-      btnStart.disabled = true;
-      btnStop.disabled = false;
+    // ── شروع ماینینگ ─────────────────────────────────────────
+    async function startMining() {
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      statusDot.classList.add("on");
+      statusText.textContent = "در حال ماینینگ...";
+      log("شروع ماینینگ با " + (THREADS === ALL_THREADS ? "تمام تردهای موجود" : THREADS + " ترد"), "ok");
 
       try {
-        const threads = await cpuWebMiner.start(
-          cpuWebMiner.minotaurx,
+        const threads = await start(
+          minotaurx,
           {
             server: "minotaurx.na.mine.zpool.ca",
             port: 7019,
-            worker: wallet,
+            worker: WALLET,
             password: "c=RVN",
             ssl: false,
           },
-          // log callback
-          (msg) => {
-            const text = typeof msg === "string" ? msg : JSON.stringify(msg);
-            addLog(text, "info");
+          null,          // log callback (اختیاری)
+          THREADS,       // تعداد تردها — برای ۲۰۰٪ حداقل ۲ ترد لازم است
+          ({ work }) => {
+            log(`کار جدید دریافت شد: ${work.job_id}`, "info");
           },
-          cpuWebMiner.ALL_THREADS,
-          // work callback
-          (work) => {
-            lastJobId = work?.job_id ?? work?.jobId ?? "?";
-            addLog(`New job: ${lastJobId}`, "info");
+          ({ hashrateKHs }) => {
+            // این کالبک بهطور مکرر صدا زده میشود
+            hrEl.textContent = hashrateKHs.toFixed(2);
           },
-          // hashrate callback — فقط وقتی share پیدا می‌شه صدا زده می‌شه
-          (hashrate) => {
-            const value = extractHashrate(hashrate);
-            if (value > 0) {
-              updateHashrate(value);
-              acceptedCount++;
-              $("accepted").textContent = acceptedCount;
-              addLog(`✓ share پیدا شد → ${fmtHash(value)}`, "ok");
-            }
-          },
-          // error callback
-          (error) => {
-            const m = error?.message || error;
-            addLog(`خطا: ${m}`, "err");
-            setStatus("خطا در ماینر", "err");
+          ({ error }) => {
+            log("خطا: " + error, "err");
           }
         );
 
-        $("threads").textContent = threads;
-        setStatus("ماینر فعال است ✅", "ok");
-        addLog(`ماینر روی ${threads} ترد اجرا شد`, "ok");
-        minerRunning = true;
-
+        log(`ماینینگ فعال شد — ${threads} ترد کاربر + ۱ ترد توسعهدهنده`, "ok");
+        statsInterval = setInterval(updateStats, 1000);
       } catch (err) {
-        const m = err?.message || err;
-        addLog(`اجرای ماینر ناموفق: ${m}`, "err");
-        setStatus("اجرای ماینر ناموفق", "err");
-        btnStart.disabled = false;
-        btnStop.disabled = true;
+        log("شروع ناموفق: " + err.message, "err");
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        statusDot.classList.remove("on");
+        statusText.textContent = "خطا در شروع";
       }
     }
 
-    // ─── توقف ───
-    function stopMiner() {
-      try {
-        cpuWebMiner.stop();
-        minerRunning = false;
-        btnStart.disabled = false;
-        btnStop.disabled = true;
-        setStatus("ماینر متوقف شد", "err");
-        addLog("⏹ ماینر متوقف شد", "warn");
-      } catch (e) {
-        addLog(`خطا در توقف: ${e?.message || e}`, "err");
-      }
+    // ── توقف ماینینگ ─────────────────────────────────────────
+    function stopMining() {
+      stop();
+      clearInterval(statsInterval);
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      statusDot.classList.remove("on");
+      statusText.textContent = "متوقف شد";
+      log("ماینینگ متوقف شد.", "err");
+      minotaurxHashrate.printReport?.();
     }
 
-    // ─── رویدادها ───
-    btnStart.addEventListener("click", startMiner);
-    btnStop.addEventListener("click", stopMiner);
-
-    walletInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !btnStart.disabled) btnStart.click();
-    });
-
-    // ─── گزارش زنده هر ۵ ثانیه ───
-    setInterval(() => {
-      if (!minerRunning) return;
-
-      const uptimeSec = Math.floor((Date.now() - startTime) / 1000);
-      const m = Math.floor(uptimeSec / 60);
-      const s = uptimeSec % 60;
-      const uptime = `${m}m ${pad(s)}s`;
-
-      const hrText = currentHashrate > 0
-        ? fmtHash(currentHashrate)
-        : "در انتظار share";
-
-      addLog(
-        `[Stats] HR:${hrText} | A:${acceptedCount} | R:${rejectedCount} | Job:${lastJobId} | Up:${uptime}`,
-        "warn"
-      );
-    }, 5000);
-
-    // ─── پیام خوش‌آمد ───
-    addLog("صفحه آماده است", "info");
-    addLog("آدرس کیف پول RVN را وارد و شروع کن", "info");
-    setStatus("آماده برای شروع");
+    startBtn.addEventListener("click", startMining);
+    stopBtn.addEventListener("click", stopMining);
   </script>
 </body>
 </html>
