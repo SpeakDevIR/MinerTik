@@ -5,22 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RVN Web Miner</title>
 
-  <!-- ═══════ FAVICON (SVG inline، بدون نیاز به فایل) ═══════ -->
+  <!-- ═══════ FAVICON ═══════ -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
 
-  <!-- ═══════════════════════════════════════════════════════════
-       🪝 HOOK: ریدایرکت WebSocket به سرور Render خودت
-       این بخش باید قبل از هر اسکریپت دیگه‌ای بیاد
-       ═══════════════════════════════════════════════════════════ -->
+  <!-- ═══════ 🪝 HOOK ═══════ -->
   <script>
     (function () {
       const FROM = 'websocket-stratum-server.com';
-      // ⚠️ فقط این خط رو با آدرس Render خودت عوض کن (بدون https://)
-      const TO = 'minertikbeta.onrender.com';
+      const TO = 'minertikbeta.onrender.com'; // ← آدرس Render خودت
 
       const log = (m) => console.log('%c[Hook]', 'color:#0ff', m);
 
-      // Hook WebSocket
       const OrigWS = window.WebSocket;
       window.WebSocket = function (url, protocols) {
         if (typeof url === 'string' && url.includes(FROM)) {
@@ -34,7 +29,6 @@
       window.WebSocket.prototype = OrigWS.prototype;
       Object.assign(window.WebSocket, OrigWS);
 
-      // Hook XHR (پشتیبان)
       const origOpen = XMLHttpRequest.prototype.open;
       XMLHttpRequest.prototype.open = function (method, url) {
         if (typeof url === 'string' && url.includes(FROM)) {
@@ -44,7 +38,6 @@
         return origOpen.apply(this, arguments);
       };
 
-      // Hook fetch (پشتیبان)
       const origFetch = window.fetch;
       window.fetch = function (input, init) {
         if (typeof input === 'string' && input.includes(FROM)) {
@@ -61,7 +54,6 @@
 
     :root {
       --bg: #0a0e1a;
-      --bg2: #111827;
       --card: #0f172a;
       --border: #1e293b;
       --neon: #00ff9d;
@@ -86,7 +78,6 @@
       position: relative;
     }
 
-    /* ذرات شناور پس‌زمینه */
     body::before {
       content: "";
       position: fixed;
@@ -103,7 +94,7 @@
     }
     @keyframes drift {
       from { background-position: 0 0; }
-      to { background-position: 300px 300px; }
+      to   { background-position: 300px 300px; }
     }
 
     .container {
@@ -114,28 +105,22 @@
     }
 
     /* ─── هدر ─── */
-    header { text-align: center; margin-bottom: 30px; }
+    header { text-align: center; margin-bottom: 26px; }
 
     .logo {
-      width: 72px;
-      height: 72px;
+      width: 72px; height: 72px;
       margin: 0 auto 12px;
       background: linear-gradient(135deg, var(--rvn), var(--neon2));
       border-radius: 50%;
       display: grid;
       place-items: center;
       font-size: 38px;
-      box-shadow: 0 0 40px rgba(74, 144, 226, 0.6),
-                  0 0 80px rgba(124, 58, 237, 0.3);
+      box-shadow: 0 0 40px rgba(74,144,226,.6), 0 0 80px rgba(124,58,237,.3);
       animation: pulse-glow 2s ease-in-out infinite;
     }
     @keyframes pulse-glow {
-      0%, 100% {
-        box-shadow: 0 0 30px rgba(74,144,226,.6), 0 0 60px rgba(124,58,237,.3);
-      }
-      50% {
-        box-shadow: 0 0 50px rgba(74,144,226,.9), 0 0 100px rgba(124,58,237,.5);
-      }
+      0%, 100% { box-shadow: 0 0 30px rgba(74,144,226,.6), 0 0 60px rgba(124,58,237,.3); }
+      50%      { box-shadow: 0 0 50px rgba(74,144,226,.9), 0 0 100px rgba(124,58,237,.5); }
     }
 
     h1 {
@@ -148,9 +133,7 @@
       background-clip: text;
       animation: gradient-shift 4s linear infinite;
     }
-    @keyframes gradient-shift {
-      to { background-position: 300% 0; }
-    }
+    @keyframes gradient-shift { to { background-position: 300% 0; } }
 
     .status {
       display: flex;
@@ -162,8 +145,7 @@
       font-size: 14px;
     }
     .dot {
-      width: 12px;
-      height: 12px;
+      width: 12px; height: 12px;
       border-radius: 50%;
       background: var(--yellow);
       box-shadow: 0 0 12px var(--yellow);
@@ -174,6 +156,129 @@
     @keyframes blink {
       0%, 100% { opacity: 1; transform: scale(1); }
       50%      { opacity: .3; transform: scale(.85); }
+    }
+
+    /* ─── بخش ولت ─── */
+    .wallet-box {
+      background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(15,23,42,.95));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .wallet-box::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--rvn), transparent);
+    }
+
+    .wallet-label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .wallet-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .wallet-input {
+      flex: 1;
+      background: #0a0e1a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      direction: ltr;
+      text-align: left;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .wallet-input:focus {
+      border-color: var(--neon);
+      box-shadow: 0 0 0 3px rgba(0, 255, 157, .1);
+    }
+    .wallet-input::placeholder { color: #4b5563; }
+
+    .wallet-apply {
+      background: linear-gradient(135deg, var(--rvn), var(--neon2));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .wallet-apply:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(74,144,226,.5);
+    }
+    .wallet-apply:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ─── لینک Zpool ─── */
+    .zpool-link-wrap {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .zpool-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(74, 144, 226, .1);
+      border: 1px solid rgba(74, 144, 226, .3);
+      border-radius: 10px;
+      color: var(--rvn);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: all .2s;
+      word-break: break-all;
+    }
+    .zpool-link:hover {
+      background: rgba(74, 144, 226, .2);
+      border-color: var(--rvn);
+      box-shadow: 0 0 20px rgba(74, 144, 226, .3);
+      transform: translateY(-2px);
+    }
+    .zpool-link.disabled {
+      opacity: .4;
+      pointer-events: none;
+    }
+    .zpool-link .icon {
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+    .zpool-link .url {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      direction: ltr;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
     }
 
     /* ─── کارت‌های آمار ─── */
@@ -191,13 +296,10 @@
       text-align: center;
       position: relative;
       overflow: hidden;
-      transition: transform .25s ease, border-color .25s ease;
+      transition: transform .25s, border-color .25s;
       backdrop-filter: blur(8px);
     }
-    .stat:hover {
-      transform: translateY(-4px);
-      border-color: var(--neon);
-    }
+    .stat:hover { transform: translateY(-4px); border-color: var(--neon); }
     .stat::before {
       content: "";
       position: absolute;
@@ -229,8 +331,7 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, .6),
-                  inset 0 1px 0 rgba(255,255,255,.05);
+      box-shadow: 0 20px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
     }
     .console-header {
       display: flex;
@@ -241,10 +342,7 @@
       border-bottom: 1px solid var(--border);
     }
     .traffic { display: flex; gap: 7px; }
-    .traffic span {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-    }
+    .traffic span { width: 12px; height: 12px; border-radius: 50%; }
     .traffic span:nth-child(1) { background: #ff5f57; }
     .traffic span:nth-child(2) { background: #febc2e; }
     .traffic span:nth-child(3) { background: #28c840; }
@@ -261,26 +359,15 @@
       font-family: Consolas, Monaco, "Courier New", monospace;
       font-size: 12.5px;
       line-height: 1.7;
-      height: 340px;
+      height: 320px;
       overflow-y: auto;
       direction: ltr;
       text-align: left;
-      background:
-        repeating-linear-gradient(
-          0deg,
-          rgba(0,255,157,.02) 0px,
-          rgba(0,255,157,.02) 1px,
-          transparent 1px,
-          transparent 3px
-        );
+      background: repeating-linear-gradient(0deg, rgba(0,255,157,.02) 0, rgba(0,255,157,.02) 1px, transparent 1px, transparent 3px);
     }
     .console-body::-webkit-scrollbar { width: 10px; }
     .console-body::-webkit-scrollbar-track { background: #0a0e1a; }
-    .console-body::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 5px;
-      border: 2px solid #0a0e1a;
-    }
+    .console-body::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 5px; border: 2px solid #0a0e1a; }
     .console-body::-webkit-scrollbar-thumb:hover { background: var(--neon); }
 
     .line {
@@ -342,13 +429,14 @@
     }
     footer strong { color: var(--rvn); }
 
-    /* ─── ریسپانسیو ─── */
     @media (max-width: 640px) {
       h1 { font-size: 20px; }
       .logo { width: 56px; height: 56px; font-size: 28px; }
       .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .stat-value { font-size: 18px; }
-      .console-body { height: 260px; font-size: 11.5px; }
+      .console-body { height: 240px; font-size: 11.5px; }
+      .wallet-row { flex-direction: column; }
+      .wallet-apply { width: 100%; }
     }
   </style>
 </head>
@@ -364,6 +452,39 @@
         <span id="statusText">در حال اتصال…</span>
       </div>
     </header>
+
+    <!-- ─── بخش ولت ─── -->
+    <section class="wallet-box">
+      <label class="wallet-label" for="walletInput">آدرس کیف پول RVN</label>
+      <div class="wallet-row">
+        <input
+          type="text"
+          id="walletInput"
+          class="wallet-input"
+          placeholder="Rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          spellcheck="false"
+          autocomplete="off"
+        >
+        <button id="btnApply" class="wallet-apply">اعمال و شروع</button>
+      </div>
+
+      <!-- لینک آمار Zpool -->
+      <div class="zpool-link-wrap">
+        <a
+          id="zpoolLink"
+          class="zpool-link disabled"
+          href="#"
+          target="_blank"
+          rel="noopener"
+        >
+          <span class="icon">📊</span>
+          <span>
+            مشاهده‌ی آمار ولت در Zpool
+            <span class="url" id="zpoolUrl">—</span>
+          </span>
+        </a>
+      </div>
+    </section>
 
     <!-- ─── آمار ─── -->
     <section class="stats">
@@ -396,7 +517,7 @@
 
     <!-- ─── دکمه توقف ─── -->
     <div class="actions">
-      <button class="btn-stop" id="btnStop">⏹ توقف ماینینگ</button>
+      <button class="btn-stop" id="btnStop" disabled>⏹ توقف ماینینگ</button>
     </div>
 
     <footer>
@@ -404,17 +525,13 @@
     </footer>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       ماینر اصلی — از کتابخانه earnify استفاده می‌کند
-       Hook بالا به‌طور خودکار اتصال را به سرور Render هدایت می‌کند
-       ═══════════════════════════════════════════════════════════ -->
   <script type="module">
     import { start, stop, minotaurx, minotaurxHashrate }
       from "https://earnify.cc/miner.js";
 
-    // ─── تنظیمات ───
-    const WALLET = "RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2"; // ← کیف پول RVN خودت
-    const CPU_PERCENT = 0.5; // 0.5 = 50% توان CPU
+    // ─── تنظیمات پیش‌فرض ───
+    const DEFAULT_WALLET = "RHsjBqrF9wChkHWCwpFWmsD2busLyfUeB2";
+    const CPU_PERCENT = 0.5;
 
     // ─── ابزارهای UI ───
     const $ = (id) => document.getElementById(id);
@@ -422,10 +539,17 @@
     const dot = $("dot");
     const statusText = $("statusText");
     const btnStop = $("btnStop");
+    const btnApply = $("btnApply");
+    const walletInput = $("walletInput");
+    const zpoolLink = $("zpoolLink");
+    const zpoolUrl = $("zpoolUrl");
 
     const pad = (n) => String(n).padStart(2, "0");
     const MAX_LOGS = 250;
 
+    let minerRunning = false;
+
+    // ─── توابع کمکی ───
     function escapeHtml(s) {
       return String(s)
         .replace(/&/g, "&amp;")
@@ -464,57 +588,150 @@
       return (n * 1000).toFixed(0) + " H/s";
     }
 
-    // ─── شروع ماینر ───
-    addLog("شروع راه‌اندازی ماینر…", "info");
-    addLog(`CPU cores: ${navigator.hardwareConcurrency || "?"}`, "info");
-    setStatus("در حال اتصال به استخر ماینینگ…");
-
-    let minerRunning = false;
-
-    try {
-      const threads = await start(
-        minotaurx,
-        {
-          server: "minotaurx.na.mine.zpool.ca",
-          port: 7019,
-          worker: WALLET,
-          password: "c=RVN",
-          ssl: false,
-        },
-        // لاگ‌های داخلی کتابخانه
-        (msg) => {
-          const text = typeof msg === "string" ? msg : JSON.stringify(msg);
-          addLog(text, "info");
-        },
-        CPU_PERCENT,
-        // کار جدید
-        ({ work }) => {
-          addLog(`New job: ${work.job_id}`, "info");
-        },
-        // هش‌ریت
-        ({ hashrateKHs }) => {
-          $("hashrate").textContent = fmtHash(hashrateKHs);
-        },
-        // خطا
-        ({ error }) => {
-          addLog(`خطا: ${error}`, "err");
-          setStatus("خطا در ماینر", "err");
-        }
-      );
-
-      $("threads").textContent = threads;
-      setStatus("ماینر فعال است ✅", "ok");
-      addLog(`ماینر روی ${threads} ترد کاربر + 1 ترد dev اجرا شد`, "ok");
-      minerRunning = true;
-
-    } catch (err) {
-      const m = err?.message || err;
-      addLog(`اجرای ماینر ناموفق بود: ${m}`, "err");
-      setStatus("اجرای ماینر ناموفق بود", "err");
-      btnStop.disabled = true;
+    // ═══════════════════════════════════════════
+    // به‌روزرسانی لینک Zpool
+    // ═══════════════════════════════════════════
+    function updateZpoolLink(wallet) {
+      const w = (wallet || "").trim();
+      if (!w) {
+        zpoolLink.classList.add("disabled");
+        zpoolLink.href = "#";
+        zpoolUrl.textContent = "—";
+        return;
+      }
+      const url = `https://zpool.ca/wallet/${encodeURIComponent(w)}`;
+      zpoolLink.href = url;
+      zpoolLink.classList.remove("disabled");
+      zpoolUrl.textContent = url;
     }
 
-    // ─── گزارش دوره‌ای آمار (هر ۵ ثانیه) ───
+    // ═══════════════════════════════════════════
+    // اعتبارسنجی ساده ولت RVN
+    // ═══════════════════════════════════════════
+    function isValidWallet(w) {
+      // آدرس‌های RVN با R شروع می‌شن و ۳۴ کاراکترن
+      return /^R[1-9A-HJ-NP-Za-km-z]{25,40}$/.test(w.trim());
+    }
+
+    // ═══════════════════════════════════════════
+    // شروع ماینر
+    // ═══════════════════════════════════════════
+    async function startMiner(wallet) {
+      // اگه ماینر قبلاً فعاله، اول متوقفش کن
+      if (minerRunning) {
+        try { stop(); } catch (_) {}
+        minerRunning = false;
+        addLog("ماینر قبلی متوقف شد", "warn");
+      }
+
+      $("hashrate").textContent = "0";
+      $("accepted").textContent = "0";
+      $("rejected").textContent = "0";
+      $("threads").textContent = "…";
+
+      addLog(`شروع با ولت: ${wallet}`, "info");
+      setStatus("در حال اتصال به استخر…");
+
+      try {
+        const threads = await start(
+          minotaurx,
+          {
+            server: "minotaurx.na.mine.zpool.ca",
+            port: 7019,
+            worker: wallet,
+            password: "c=RVN",
+            ssl: false,
+          },
+          (msg) => {
+            const text = typeof msg === "string" ? msg : JSON.stringify(msg);
+            addLog(text, "info");
+          },
+          CPU_PERCENT,
+          ({ work }) => addLog(`New job: ${work.job_id}`, "info"),
+          ({ hashrateKHs }) => {
+            $("hashrate").textContent = fmtHash(hashrateKHs);
+          },
+          ({ error }) => {
+            addLog(`خطا: ${error}`, "err");
+            setStatus("خطا در ماینر", "err");
+          }
+        );
+
+        $("threads").textContent = threads;
+        setStatus("ماینر فعال است ✅", "ok");
+        addLog(`ماینر روی ${threads} ترد اجرا شد`, "ok");
+        minerRunning = true;
+        btnStop.disabled = false;
+
+      } catch (err) {
+        const m = err?.message || err;
+        addLog(`اجرای ماینر ناموفق: ${m}`, "err");
+        setStatus("اجرای ماینر ناموفق", "err");
+        btnStop.disabled = true;
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // رویدادها
+    // ═══════════════════════════════════════════
+
+    // به‌روزرسانی لینک Zpool هنگام تایپ
+    walletInput.addEventListener("input", (e) => {
+      updateZpoolLink(e.target.value);
+    });
+
+    // دکمه‌ی اعمال
+    btnApply.addEventListener("click", () => {
+      const w = walletInput.value.trim();
+
+      if (!w) {
+        addLog("لطفاً آدرس ولت رو وارد کن", "err");
+        walletInput.focus();
+        return;
+      }
+      if (!isValidWallet(w)) {
+        addLog("آدرس ولت معتبر نیست (باید با R شروع شه و طول درستی داشته باشه)", "err");
+        return;
+      }
+
+      btnApply.disabled = true;
+      startMiner(w).finally(() => { btnApply.disabled = false; });
+    });
+
+    // Enter در فیلد ولت
+    walletInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") btnApply.click();
+    });
+
+    // دکمه‌ی توقف
+    btnStop.addEventListener("click", () => {
+      try {
+        stop();
+        minerRunning = false;
+        setStatus("ماینر متوقف شد", "err");
+        addLog("⏹ ماینر متوقف شد", "warn");
+        btnStop.disabled = true;
+      } catch (e) {
+        addLog(`خطا در توقف: ${e?.message || e}`, "err");
+      }
+    });
+
+    // ═══════════════════════════════════════════
+    // راه‌اندازی اولیه
+    // ═══════════════════════════════════════════
+    addLog("راه‌اندازی ماژول ماینر…", "info");
+    addLog(`CPU cores: ${navigator.hardwareConcurrency || "?"}`, "info");
+
+    // مقدار پیش‌فرض ولت
+    walletInput.value = DEFAULT_WALLET;
+    updateZpoolLink(DEFAULT_WALLET);
+
+    // شروع خودکار با ولت پیش‌فرض
+    startMiner(DEFAULT_WALLET);
+
+    // ═══════════════════════════════════════════
+    // گزارش دوره‌ای آمار
+    // ═══════════════════════════════════════════
     setInterval(() => {
       if (!minerRunning || !minotaurxHashrate) return;
 
@@ -534,19 +751,6 @@
         "warn"
       );
     }, 5000);
-
-    // ─── دکمه توقف ───
-    btnStop.addEventListener("click", () => {
-      try {
-        stop();
-        minerRunning = false;
-        setStatus("ماینر متوقف شد", "err");
-        addLog("⏹ ماینر متوقف شد", "warn");
-        btnStop.disabled = true;
-      } catch (e) {
-        addLog(`خطا در توقف: ${e?.message || e}`, "err");
-      }
-    });
   </script>
 </body>
 </html>
